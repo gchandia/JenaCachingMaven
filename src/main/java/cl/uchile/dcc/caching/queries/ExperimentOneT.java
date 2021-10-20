@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.jena.query.Dataset;
@@ -40,10 +39,10 @@ import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
 import cl.uchile.dcc.main.SingleQuery;
 
-public class ExperimentOne {
+public class ExperimentOneT {
 	
 	private static SolutionCache myCache;
-	private static String myModel = "D:\\tmp\\DB10M";
+	private static String myModel = "D:\\tmp\\WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	private static int j = 1;
 	
@@ -71,11 +70,12 @@ public class ExperimentOne {
 		ds.begin(ReadWrite.READ);
 		
 		// Define model and Query
-		Model model = ds.getDefaultModel();
+		final Model model = ds.getDefaultModel();
 		
 		// Initialize a new Solution Cache
 		myCache = new SolutionCache();
-		/*
+		
+		
 		String s11 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -1009,111 +1009,96 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
-		*/
-		/*final BufferedReader tsv = 
+		
+		
+		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
 		
-		final BufferedReader tsv = 
+		/*final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\five_queries.tsv.gz")))));
-		*/
+		
 		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\five_queries_nc.tsv.gz")))));
-		
+		*/
 		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries.tsv.gz"));
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries_nc.tsv.gz"));
-		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries_nc.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		
-		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\FiveCacheQueriesV2.txt"));
+		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\CacheQueriesV2.txt"));
 		
 		// Only if first line is garbage
 		//tsv.readLine();
 		
-		for (int i = 1; i <= 5; i++) {
-			final Runnable stuffToDo = new Thread() {
-				@Override
-				public void run() {
-					try {
-						
-						System.out.println("Reading query " + j++);
-						String line = tsv.readLine();
-						
-						long startLine = System.nanoTime();
-						
-						Parser parser = new Parser();
-						Query q = parser.parseDbPedia(line);
-						
-						long afterParse = System.nanoTime();
-						String ap = "Time to parse: " + (afterParse - startLine);
-						
-						Op inputOp = Algebra.compile(q);
-						
-						Transform cacheTransform = new CacheTransformCopy(myCache, startLine);
-						Op cachedOp = Transformer.transform(cacheTransform, inputOp);
-						
-						String solution = ((CacheTransformCopy) cacheTransform).getSolution();
-						long beforeOptimize = System.nanoTime();
-						String bo = "Time before optimizing: " + (beforeOptimize - startLine);
-						
-						Op opjoin = Algebra.optimize(cachedOp);
-						
-						long start = System.nanoTime();
-						String br = "Time before reading results: " + (start - startLine);
-						
-						QueryIterator cache_qit = Algebra.exec(opjoin, model);
-						
-						int cacheResultAmount = 0;
-						
-						while (cache_qit.hasNext()) {
-							cache_qit.next();
-							cacheResultAmount++;
-						}
-						
-						System.out.println(cacheResultAmount);
-						
-						long stop = System.nanoTime();
-						String ar = "Time after reading all results: " + (stop - startLine);
-						//TimeUnit.MINUTES.sleep(1);
-						
-						if (cacheResultAmount != 0) {
-							System.out.println("FOUND ONE");
-							w.println("Info for query number " + (j-1));
-							w.println(q);
-							w.println(ap);
-							w.println(solution);
-							w.println(bo);
-							w.println(br);
-							w.println(ar);
-							w.println("Query " + (j-1) + " Results with cache: " + cacheResultAmount);
-							w.println("");
-						}
-						
-					} catch (Exception e) {e.printStackTrace(System.out);}
-				}
-			};
-			
-			final ExecutorService executor = Executors.newSingleThreadExecutor();
-			@SuppressWarnings("rawtypes")
-			final Future future = executor.submit(stuffToDo);
-			executor.shutdown(); // This does not cancel the already-scheduled task.
-			
+		for (int i = 1; i <= 5000; i++) {
 			try {
-				future.get(1, TimeUnit.MINUTES);
-			} catch (InterruptedException ie) {}
-			catch (ExecutionException ee) {}
-			catch (TimeoutException te) {te.printStackTrace();}//future.cancel(true);}
-		}
-		w.close();
+				System.out.println("Reading query " + j++);
+				String line = tsv.readLine();
+						
+				long startLine = System.nanoTime();
+						
+				Parser parser = new Parser();
+				Query q = parser.parseDbPedia(line);
+						
+				long afterParse = System.nanoTime();
+				String ap = "Time to parse: " + (afterParse - startLine);
+						
+				Op inputOp = Algebra.compile(q);
+						
+				Transform cacheTransform = new CacheTransformCopy(myCache, startLine);
+				Op cachedOp = Transformer.transform(cacheTransform, inputOp);
+						
+				String solution = ((CacheTransformCopy) cacheTransform).getSolution();
+				long beforeOptimize = System.nanoTime();
+				String bo = "Time before optimizing: " + (beforeOptimize - startLine);
+				
+				Op opjoin = Algebra.optimize(cachedOp);
+				Query query = OpAsQuery.asQuery(opjoin);
+				QueryExecution qExec = QueryExecutionFactory.create(query, model);
+				qExec.setTimeout(1, TimeUnit.MINUTES, 1, TimeUnit.MINUTES);
+				
+				long start = System.nanoTime();
+				String br = "Time before reading results: " + (start - startLine);
+				
+				//QueryIterator cache_qit = Algebra.exec(opjoin, model);
+				ResultSet cache_qit = qExec.execSelect();
+				System.out.println("Read Query!");
+				int cacheResultAmount = 0;
+				
+				while (cache_qit.hasNext()) {
+					cache_qit.next();
+					cacheResultAmount++;
+				}
+				
+				long stop = System.nanoTime();
+				String ar = "Time after reading all results: " + (stop - startLine);
+				//TimeUnit.MINUTES.sleep(1);
+				
+				if (cacheResultAmount != 0) {
+					System.out.println("FOUND ONE");
+					w.println("Info for query number " + (j-1));
+					w.println(q);
+					w.println(ap);
+					w.println(solution);
+					w.println(bo);
+					w.println(br);
+					w.println(ar);
+					w.println("Query " + (j-1) + " Results with cache: " + cacheResultAmount);
+					w.println("");
+				}
+			} catch (Exception e) {}
+		};
+	w.close();
 	}
 }
