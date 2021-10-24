@@ -43,9 +43,10 @@ import cl.uchile.dcc.main.SingleQuery;
 public class ExperimentOne {
 	
 	private static SolutionCache myCache;
-	private static String myModel = "D:\\tmp\\DB10M";
+	private static String myModel = "D:\\tmp\\WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
-	private static int j = 1;
+	private static int j = 501;
+	private static boolean running = false;
 	
 	public static int getNumberOfCompressedLines(String input) throws Exception {
 		int lines = 0;
@@ -75,7 +76,8 @@ public class ExperimentOne {
 		
 		// Initialize a new Solution Cache
 		myCache = new SolutionCache();
-		/*
+		
+		
 		String s11 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -987,6 +989,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q49Bgps.get(0), q49Results);
 		
+		
 		String s50 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -1009,42 +1012,54 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
-		*/
-		/*final BufferedReader tsv = 
+		
+		ds.end();
+		
+		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
-		
+		/*
 		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\five_queries.tsv.gz")))));
-		*/
+		
 		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\five_queries_nc.tsv.gz")))));
-		
+		*/
 		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries.tsv.gz"));
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries_nc.tsv.gz"));
-		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries_nc.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		
-		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\FiveCacheQueriesV2.txt"));
+		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\CacheQueriesV2_500.txt"));
 		
 		// Only if first line is garbage
 		//tsv.readLine();
 		
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 500; i++) {
+			tsv.readLine();
+		}
+		
+		for (int i = 1; i <= 1000; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
 					try {
+						while (running) {
+							System.out.println("waiting...");
+						}
+						
+						running = true;
+						ds.begin(ReadWrite.READ);
 						
 						System.out.println("Reading query " + j++);
 						String line = tsv.readLine();
@@ -1080,8 +1095,6 @@ public class ExperimentOne {
 							cacheResultAmount++;
 						}
 						
-						System.out.println(cacheResultAmount);
-						
 						long stop = System.nanoTime();
 						String ar = "Time after reading all results: " + (stop - startLine);
 						//TimeUnit.MINUTES.sleep(1);
@@ -1098,8 +1111,8 @@ public class ExperimentOne {
 							w.println("Query " + (j-1) + " Results with cache: " + cacheResultAmount);
 							w.println("");
 						}
-						
-					} catch (Exception e) {e.printStackTrace(System.out);}
+						running = false;
+					} catch (Exception e) {running = false;}//e.printStackTrace(System.out);}
 				}
 			};
 			
@@ -1110,9 +1123,9 @@ public class ExperimentOne {
 			
 			try {
 				future.get(1, TimeUnit.MINUTES);
-			} catch (InterruptedException ie) {}
-			catch (ExecutionException ee) {}
-			catch (TimeoutException te) {te.printStackTrace();}//future.cancel(true);}
+			} catch (InterruptedException ie) {running = false;}
+			catch (ExecutionException ee) {running = false;}
+			catch (TimeoutException te) {running = false;}
 		}
 		w.close();
 	}
