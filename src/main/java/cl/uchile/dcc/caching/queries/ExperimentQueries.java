@@ -27,8 +27,7 @@ import cl.uchile.dcc.caching.common_joins.Parser;
 
 
 public class ExperimentQueries {
-	private static int j = 501;
-	private static boolean running = false;
+	private static int j = 1;
 	
 	public int getNumberOfLines(String input) throws Exception {
 		int lines = 0;
@@ -69,31 +68,28 @@ public class ExperimentQueries {
 		ds.begin(ReadWrite.READ);
 		// Define model and Query
 		Model model = ds.getDefaultModel();
-		BufferedReader tsv = 
+		/*BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
-		PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NoCacheQueries1000.txt"));
+		*/
+		BufferedReader tsv = 
+				new BufferedReader (
+						new InputStreamReader(
+								new GZIPInputStream(
+										new FileInputStream(
+												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
+		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
+		PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NoCacheNullQueriesTwo.txt"));
 		
-		//I want to do from lines 501-1500
-		
-		for (int i = 1; i <= 500; i++) {
-			tsv.readLine();
-		}
-		
-		for (int i = 1; i <= 1000; i++) {
+		for (int i = 1; i <= 10; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
 					try {
-						while (running) {
-							System.out.println("waiting...");
-						}
-						
-						running = true;
 						ds.begin(ReadWrite.READ);
 						
 						System.out.println("Reading query " + j++);
@@ -113,6 +109,7 @@ public class ExperimentQueries {
 						String bo = "Time before optimizing: " + (beforeOptimize - startLine);
 						
 						alg = Algebra.optimize(alg);
+						System.out.println(alg);
 						
 						long start = System.nanoTime();
 						String br = "Time before reading results: " + (start - startLine);
@@ -124,6 +121,8 @@ public class ExperimentQueries {
 							qit.next();
 							resultAmount++;
 						}
+						
+						System.out.println(resultAmount);
 						
 						long stop = System.nanoTime();
 						String ar = "Time after reading all results: " + (stop - startLine);
@@ -140,9 +139,7 @@ public class ExperimentQueries {
 							w.println("");
 						}
 						
-						running = false;
-						
-					} catch (Exception e) {running = false;}
+					} catch (Exception e) {}
 				}
 			};
 			
@@ -153,11 +150,10 @@ public class ExperimentQueries {
 			
 			try { 
 				  future.get(1, TimeUnit.MINUTES);
-			} catch (InterruptedException ie) {running = false;}
-			catch (ExecutionException ee) {running = false;}
-			catch (TimeoutException te) {running = false;}
+			} catch (InterruptedException ie) {}
+			catch (ExecutionException ee) {}
+			catch (TimeoutException te) {}
 		}
 		w.close();
 	}
-
 }

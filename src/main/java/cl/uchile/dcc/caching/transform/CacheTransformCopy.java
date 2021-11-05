@@ -9,6 +9,7 @@ import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.algebra.op.OpJoin;
+import org.apache.jena.sparql.algebra.op.OpQuad;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.bgps.ManipulateBgps;
@@ -76,10 +77,19 @@ public class CacheTransformCopy extends TransformCopy {
 		return output;
 	}
 	
+	public Op transform(OpQuad opQuad) {
+		return new OpQuad(opQuad.getQuad());
+	}
+	
 	public Op transform(OpBGP bgp) {
+		//System.out.println("Bgp is:\n" + bgp);
+		
 		// Get query bgps
 		ArrayList<OpBGP> bgps = ExtractBgps.getSplitBgps(bgp);
 		bgps = ExtractBgps.separateBGPs(bgps);
+		
+		//Refresh non filtered bgps
+		nonFilteredBgps = new ArrayList<OpBGP>();
 		
 		// Filter bgps that have constants in the cache
 		bgps = filterBgps(bgps);

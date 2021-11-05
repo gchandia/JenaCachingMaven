@@ -45,8 +45,7 @@ public class ExperimentOne {
 	private static SolutionCache myCache;
 	private static String myModel = "D:\\tmp\\WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
-	private static int j = 501;
-	private static boolean running = false;
+	private static int j = 1;
 	
 	public static int getNumberOfCompressedLines(String input) throws Exception {
 		int lines = 0;
@@ -77,7 +76,7 @@ public class ExperimentOne {
 		// Initialize a new Solution Cache
 		myCache = new SolutionCache();
 		
-		
+		/*
 		String s11 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -222,6 +221,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q16Bgps.get(0), q16Results);
 		
+		*/
 		String s17 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -245,6 +245,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q17Bgps.get(0), q17Results);
 		
+		/*
 		String s18 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -314,7 +315,7 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q20Bgps.get(0), q20Results);
-
+		
 		String s21 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -337,6 +338,7 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q21Bgps.get(0), q21Results);
+		
 		
 		String s22 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
@@ -1012,53 +1014,37 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
-		
+		*/
 		ds.end();
 		
-		final BufferedReader tsv = 
+		/*final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
-		/*
-		final BufferedReader tsv = 
-				new BufferedReader (
-						new InputStreamReader(
-								new GZIPInputStream(
-										new FileInputStream(
-												new File("D:\\wikidata_logs\\five_queries.tsv.gz")))));
-		
-		final BufferedReader tsv = 
-				new BufferedReader (
-						new InputStreamReader(
-								new GZIPInputStream(
-										new FileInputStream(
-												new File("D:\\wikidata_logs\\five_queries_nc.tsv.gz")))));
 		*/
-		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries.tsv.gz"));
-		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\five_queries_nc.tsv.gz"));
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		final BufferedReader tsv = 
+				new BufferedReader (
+						new InputStreamReader(
+								new GZIPInputStream(
+										new FileInputStream(
+												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
 		
-		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\CacheQueriesV2_500.txt"));
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
+		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		
-		// Only if first line is garbage
-		//tsv.readLine();
+		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NullQueriesTwo.txt"));
 		
-		for (int i = 1; i <= 500; i++) {
+		for (int i = 1; i <= 2; i++) {
 			tsv.readLine();
 		}
 		
-		for (int i = 1; i <= 1000; i++) {
+		for (int i = 1; i <= 1; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
 					try {
-						while (running) {
-							System.out.println("waiting...");
-						}
-						
-						running = true;
 						ds.begin(ReadWrite.READ);
 						
 						System.out.println("Reading query " + j++);
@@ -1082,6 +1068,7 @@ public class ExperimentOne {
 						String bo = "Time before optimizing: " + (beforeOptimize - startLine);
 						
 						Op opjoin = Algebra.optimize(cachedOp);
+						System.out.println(opjoin);
 						
 						long start = System.nanoTime();
 						String br = "Time before reading results: " + (start - startLine);
@@ -1094,6 +1081,8 @@ public class ExperimentOne {
 							cache_qit.next();
 							cacheResultAmount++;
 						}
+						
+						System.out.println(cacheResultAmount);
 						
 						long stop = System.nanoTime();
 						String ar = "Time after reading all results: " + (stop - startLine);
@@ -1111,8 +1100,7 @@ public class ExperimentOne {
 							w.println("Query " + (j-1) + " Results with cache: " + cacheResultAmount);
 							w.println("");
 						}
-						running = false;
-					} catch (Exception e) {running = false;}//e.printStackTrace(System.out);}
+					} catch (Exception e) {}//e.printStackTrace(System.out);}
 				}
 			};
 			
@@ -1123,9 +1111,9 @@ public class ExperimentOne {
 			
 			try {
 				future.get(1, TimeUnit.MINUTES);
-			} catch (InterruptedException ie) {running = false;}
-			catch (ExecutionException ee) {running = false;}
-			catch (TimeoutException te) {running = false;}
+			} catch (InterruptedException ie) {}
+			catch (ExecutionException ee) {}
+			catch (TimeoutException te) {}
 		}
 		w.close();
 	}

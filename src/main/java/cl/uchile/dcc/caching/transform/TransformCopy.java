@@ -109,7 +109,7 @@ public class TransformCopy implements Transform
     }
 
     private Op xform(Op1 op, Op subOp)
-    { 
+    {
         if ( ! alwaysCopy && op.getSubOp() == subOp )
             return op ;
         return op.copy(subOp) ;
@@ -143,27 +143,27 @@ public class TransformCopy implements Transform
 	@Override
 	public Op transform(OpQuad arg0) {
 		// TODO Auto-generated method stub
-		return null;
+		return xform(arg0);
 	}
 	@Override
 	public Op transform(OpQuadBlock arg0) {
 		// TODO Auto-generated method stub
-		return null;
+		return xform(arg0);
 	}
 	@Override
 	public Op transform(OpExtend arg0, Op arg1) {
 		// TODO Auto-generated method stub
-		return null;
+		return xform(arg0, arg1);
 	}
 	@Override
 	public Op transform(OpTopN arg0, Op arg1) {
 		// TODO Auto-generated method stub
-		return null;
+		return xform(arg0, arg1);
 	}
 	@Override
 	public Op transform(OpGroup arg0, Op arg1) {
 		// TODO Auto-generated method stub
-		return null;
+		return xform(arg0, arg1);
 	}
 }
 
