@@ -221,7 +221,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q16Bgps.get(0), q16Results);
 		
-		*/
+		
 		String s17 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -991,7 +991,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q49Bgps.get(0), q49Results);
 		
-		
+		*/
 		String s50 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -1014,7 +1014,14 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
-		*/
+		
+		
+		String q1 = "SELECT  *\n"
+				+ "WHERE\n"
+				+ "  { ?x ?p ?y .\n"
+				+ "    ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251>\n"
+				+ "  }";
+		
 		ds.end();
 		
 		/*final BufferedReader tsv = 
@@ -1048,7 +1055,8 @@ public class ExperimentOne {
 						ds.begin(ReadWrite.READ);
 						
 						System.out.println("Reading query " + j++);
-						String line = tsv.readLine();
+						//String line = tsv.readLine();
+						String line = q1;
 						
 						long startLine = System.nanoTime();
 						
@@ -1059,6 +1067,7 @@ public class ExperimentOne {
 						String ap = "Time to parse: " + (afterParse - startLine);
 						
 						Op inputOp = Algebra.compile(q);
+						System.out.println(inputOp);
 						
 						Transform cacheTransform = new CacheTransformCopy(myCache, startLine);
 						Op cachedOp = Transformer.transform(cacheTransform, inputOp);
@@ -1100,7 +1109,7 @@ public class ExperimentOne {
 							w.println("Query " + (j-1) + " Results with cache: " + cacheResultAmount);
 							w.println("");
 						}
-					} catch (Exception e) {}//e.printStackTrace(System.out);}
+					} catch (Exception e) {e.printStackTrace(System.out);}
 				}
 			};
 			

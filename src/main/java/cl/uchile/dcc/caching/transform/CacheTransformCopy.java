@@ -49,6 +49,7 @@ public class CacheTransformCopy extends TransformCopy {
 			
 			if ((s.isVariable() || s.isBlank()) && (p.isVariable() || p.isBlank()) && (o.isVariable() || o.isBlank())) {
 				nonFilteredBgps.add(bgp);
+				continue;
 			}
 			
 			if (!s.isVariable() && !s.isBlank()) {
@@ -93,6 +94,8 @@ public class CacheTransformCopy extends TransformCopy {
 		
 		// Filter bgps that have constants in the cache
 		bgps = filterBgps(bgps);
+		System.out.println(bgps);
+		System.out.println(nonFilteredBgps);
 		
 		// Get all query subbgps of size two and more
 		ArrayList<ArrayList<OpBGP>> subBgps = Joins.getSubBGPs(bgps);
