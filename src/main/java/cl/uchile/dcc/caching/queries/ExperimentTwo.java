@@ -30,8 +30,18 @@ public class ExperimentTwo {
 				+ "?var3 <http://www.wikidata.org/prop/direct/P625>  ?var2}}";
 		String s8 = "SELECT  ?var1 ?var2 WHERE { <http://www.wikidata.org/entity/Q417743> ?var1  ?var2}";
 		String s9 = "SELECT  ?var1 ?var2 WHERE { <http://www.wikidata.org/entity/Q416426> ?var1  ?var2}";
+		String s10 = "SELECT  *\n"
+				+ "WHERE\n"
+				+ "  { ?x  <http://www.wikidata.org/prop/direct/P31>  ?y .\n"
+				+ "    ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251>\n"
+				+ "  }";
+		String s11 = "SELECT  *\n"
+				+ "WHERE\n"
+				+ "  { ?x  <http://www.wikidata.org/prop/direct/P495>  ?y .\n"
+				+ "    ?x  <http://www.wikidata.org/prop/direct/P495>  <http://www.wikidata.org/entity/Q15180>\n"
+				+ "  }";
 		
-		Query q1 = QueryFactory.create(s8);
+		Query q1 = QueryFactory.create(s11);
 		String myModel = "D:\\tmp\\WikiDB";
 		Dataset ds = TDBFactory.createDataset(myModel);
 		// Write if I wanna write, but I'll be using read to query over it mostly
@@ -40,21 +50,27 @@ public class ExperimentTwo {
 		// Define model and Query
 		final Model model = ds.getDefaultModel();
 		QueryExecution q11Exec = QueryExecutionFactory.create(q1, model);
+		System.out.println("Executing select");
 		ResultSet q11Results = q11Exec.execSelect();
 		Op op = Algebra.compile(q1);
 		op = Algebra.optimize(op);
+		System.out.println("Executing exec");
 		QueryIterator cache_qit = Algebra.exec(op, model);
 		int resultAmount = 0;
 		int cacheResultAmount = 0;
 		
+		System.out.println("Reading select");
 		while (q11Results.hasNext()) {
 			q11Results.next();
 			resultAmount++;
+			System.out.println(resultAmount);
 		}
 		
+		System.out.println("Reading exec");
 		while (cache_qit.hasNext()) {
 			cache_qit.next();
 			cacheResultAmount++;
+			System.out.println(cacheResultAmount);
 		}
 		
 		System.out.println(resultAmount);

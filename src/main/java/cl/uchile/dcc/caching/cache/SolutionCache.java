@@ -82,6 +82,7 @@ public class SolutionCache {
 		// TEST
 		int i = 0;
 		while(results.hasNext()) {
+		//while (i < 10) {
 			table.addBinding(results.nextBinding());
 			//if (i++ == 10) break;
 			i++;
@@ -207,7 +208,7 @@ public class SolutionCache {
 		String bf = "Time before first cycle: " + (beforeFirstCycle - startLine);
         for (Var oldVar: t.getVars()) {
         	String newVarS = getKey(varMap, oldVar.toString().substring(1));
-        	Var newVar = Var.alloc(newVarS.substring(1));
+        	Var newVar = Var.alloc(newVarS.substring(0));
         	newVars.add(newVar);
         }
         long afterFirstCycle = System.nanoTime();

@@ -19,6 +19,7 @@ import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.Op;
+import org.apache.jena.sparql.algebra.OpAsQuery;
 import org.apache.jena.sparql.algebra.Transform;
 import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.algebra.op.OpBGP;
@@ -70,10 +71,11 @@ public class ExperimentThree {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
 		
+		
 		String q1 = "SELECT  *\n"
 				+ "WHERE\n"
-				+ "  { ?x ?p ?y .\n"
-				+ "    ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251>\n"
+				+ "  { ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251> .\n"
+				//+ "    ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251>\n"
 				+ "  }";
 		
 		ds.end();
@@ -92,20 +94,21 @@ public class ExperimentThree {
 						Query q = parser.parseDbPedia(line);
 						
 						Op inputOp = Algebra.compile(q);
-						System.out.println(inputOp);
 						
 						Transform cacheTransform = new CacheTransformCopy(myCache, 0);
 						Op cachedOp = Transformer.transform(cacheTransform, inputOp);
 						
 						Op opjoin = Algebra.optimize(cachedOp);
-						System.out.println(opjoin);
 						
-						QueryIterator cache_qit = Algebra.exec(opjoin, model);
+						Query qFinal = OpAsQuery.asQuery(opjoin);
+						
+						QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
+						ResultSet rs = qFinalExec.execSelect();
 						
 						int cacheResultAmount = 0;
 						
-						while (cache_qit.hasNext()) {
-							cache_qit.next();
+						while (rs.hasNext()) {
+							rs.next();
 							cacheResultAmount++;
 						}
 						
