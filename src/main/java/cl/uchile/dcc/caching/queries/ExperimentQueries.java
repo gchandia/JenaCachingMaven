@@ -68,24 +68,27 @@ public class ExperimentQueries {
 		ds.begin(ReadWrite.READ);
 		// Define model and Query
 		Model model = ds.getDefaultModel();
-		/*BufferedReader tsv = 
+		
+		BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
-		*/
+		
+		/*
 		BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
-		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
-		PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NoCacheNullQueriesTwo.txt"));
+		*/
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
+		PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NoCacheQueries.txt"));
 		
-		for (int i = 1; i <= 10; i++) {
+		for (int i = 1; i <= 5000; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
@@ -109,7 +112,7 @@ public class ExperimentQueries {
 						String bo = "Time before optimizing: " + (beforeOptimize - startLine);
 						
 						alg = Algebra.optimize(alg);
-						System.out.println(alg);
+						//System.out.println(alg);
 						
 						long start = System.nanoTime();
 						String br = "Time before reading results: " + (start - startLine);
@@ -122,7 +125,7 @@ public class ExperimentQueries {
 							resultAmount++;
 						}
 						
-						System.out.println(resultAmount);
+						//System.out.println(resultAmount);
 						
 						long stop = System.nanoTime();
 						String ar = "Time after reading all results: " + (stop - startLine);

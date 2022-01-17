@@ -100,7 +100,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q11Bgps.get(0), q11Results);
 		
-		/*
+		
 		String s12 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -200,6 +200,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q15Bgps.get(0), q15Results);
 		
+		
 		String s16 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -272,6 +273,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q18Results));
 		myCache.cache(q18Bgps.get(0), q18Results);
 		
+		
 		String s19 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -295,6 +297,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q19Bgps.get(0), q19Results);
 		
+		
 		String s20 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -317,6 +320,7 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q20Bgps.get(0), q20Results);
+		
 		
 		String s21 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
@@ -1016,62 +1020,12 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
-		*/
+		
 		
 		String q1 = "SELECT  *\n"
 				+ "WHERE\n"
 				+ "  { ?x ?p ?y .\n"
 				+ "    ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251>\n"
-				+ "  }";
-		
-		String q2 = "SELECT DISTINCT  ?var1\r\n"
-				+ "WHERE\r\n"
-				+ "  {   {   { <http://www.wikidata.org/entity/Q20895241>\r\n"
-				+ "                      <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "        UNION\r\n"
-				+ "          { { <http://www.wikidata.org/entity/Q20895241>\r\n"
-				+ "                        ?var2  ?var3\r\n"
-				+ "              FILTER ( ?var3 != <http://www.wikidata.org/entity/Q5> )\r\n"
-				+ "            }\r\n"
-				+ "            ?var3  <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "      }\r\n"
-				+ "    UNION\r\n"
-				+ "      {VALUES ?ar4 { <http://www.wikidata.org/entity/Q25713029> <http://www.wikidata.org/entity/Q21092921> <http://www.wikidata.org/entity/Q24630379> <http://www.wikidata.org/entity/Q21284369> <http://www.wikidata.org/entity/Q21284376> <http://www.wikidata.org/entity/Q21093640> <http://www.wikidata.org/entity/Q27061829> <http://www.wikidata.org/entity/Q27065423> <http://www.wikidata.org/entity/Q27134761> <http://www.wikidata.org/entity/Q27134746> <http://www.wikidata.org/entity/Q27062363> <http://www.wikidata.org/entity/Q27134700> <http://www.wikidata.org/entity/Q27211680> <http://www.wikidata.org/entity/Q23034460> <http://www.wikidata.org/entity/Q27061937> <http://www.wikidata.org/entity/Q27062596> <http://www.wikidata.org/entity/Q21198764> <http://www.wikidata.org/entity/Q27061962> <http://www.wikidata.org/entity/Q27062487> <http://www.wikidata.org/entity/Q27093381> <http://www.wikidata.org/entity/Q27134659> <http://www.wikidata.org/entity/Q27134682> <http://www.wikidata.org/entity/Q24082733> <http://www.wikidata.org/entity/Q28031365> <http://www.wikidata.org/entity/Q27062470> <http://www.wikidata.org/entity/Q27062605> <http://www.wikidata.org/entity/Q27062334> <http://www.wikidata.org/entity/Q27062312> <http://www.wikidata.org/entity/Q24607780> <http://www.wikidata.org/entity/Q28869882> <http://www.wikidata.org/entity/Q28936799> <http://www.wikidata.org/entity/Q29036429> <http://www.wikidata.org/entity/Q27062346> <http://www.wikidata.org/entity/Q27134862> <http://www.wikidata.org/entity/Q27062683> <http://www.wikidata.org/entity/Q24188395> <http://www.wikidata.org/entity/Q38599953> <http://www.wikidata.org/entity/Q26899110> <http://www.wikidata.org/entity/Q27795847> <http://www.wikidata.org/entity/Q27134827> <http://www.wikidata.org/entity/Q27062617> <http://www.wikidata.org/entity/Q41799194> <http://www.wikidata.org/entity/Q28942417> <http://www.wikidata.org/entity/Q27134949> <http://www.wikidata.org/entity/Q43066944> <http://www.wikidata.org/entity/Q31724476> <http://www.wikidata.org/entity/Q42307037> <http://www.wikidata.org/entity/Q20987307> <http://www.wikidata.org/entity/Q27134895> <http://www.wikidata.org/entity/Q27063335> <http://www.wikidata.org/entity/Q54404987> <http://www.wikidata.org/entity/Q54405113> <http://www.wikidata.org/entity/Q27134724> <http://www.wikidata.org/entity/Q26261238> <http://www.wikidata.org/entity/Q26707522> <http://www.wikidata.org/entity/Q27134787> <http://www.wikidata.org/entity/Q54405152> <http://www.wikidata.org/entity/Q27093408> <http://www.wikidata.org/entity/Q28549426> <http://www.wikidata.org/entity/Q27062639> <http://www.wikidata.org/entity/Q54405156> <http://www.wikidata.org/entity/Q30149558> <http://www.wikidata.org/entity/Q21092920> <http://www.wikidata.org/entity/Q27134879> <http://www.wikidata.org/entity/Q42734179> <http://www.wikidata.org/entity/Q42025293> <http://www.wikidata.org/entity/Q42896569> <http://www.wikidata.org/entity/Q47234573> <http://www.wikidata.org/entity/Q27990101> <http://www.wikidata.org/entity/Q38882086> <http://www.wikidata.org/entity/Q56914156> <http://www.wikidata.org/entity/Q27701165> <http://www.wikidata.org/entity/Q27701454> <http://www.wikidata.org/entity/Q27062762> <http://www.wikidata.org/entity/Q28942228> <http://www.wikidata.org/entity/Q27062375> <http://www.wikidata.org/entity/Q53844513> <http://www.wikidata.org/entity/Q54405047> <http://www.wikidata.org/entity/Q56542415> <http://www.wikidata.org/entity/Q56919959> <http://www.wikidata.org/entity/Q54404989> <http://www.wikidata.org/entity/Q55393564> <http://www.wikidata.org/entity/Q56160807> <http://www.wikidata.org/entity/Q56914129> <http://www.wikidata.org/entity/Q57337377> <http://www.wikidata.org/entity/Q30279449> <http://www.wikidata.org/entity/Q33975069> <http://www.wikidata.org/entity/Q47543807> <http://www.wikidata.org/entity/Q54404976> <http://www.wikidata.org/entity/Q54405008> <http://www.wikidata.org/entity/Q54405189> <http://www.wikidata.org/entity/Q55069979> <http://www.wikidata.org/entity/Q56969571> <http://www.wikidata.org/entity/Q43253348> <http://www.wikidata.org/entity/Q50813856> <http://www.wikidata.org/entity/Q52312226> }\r\n"
-				+ "          { ?var4  <http://www.wikidata.org/prop/direct/P921>  _:b0 .\r\n"
-				+ "            _:b0   <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "        UNION\r\n"
-				+ "          { ?var5  <http://www.wikidata.org/prop/direct/P50>  ?var4 ;\r\n"
-				+ "                   <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "      }\r\n"
-				+ "  }";
-		
-		String q3 = "SELECT DISTINCT  ?var1\r\n"
-				+ "WHERE\r\n"
-				+ "  {   {   { <http://www.wikidata.org/entity/Q20895241>\r\n"
-				+ "                      <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "        UNION\r\n"
-				+ "          { { <http://www.wikidata.org/entity/Q20895241>\r\n"
-				+ "                        ?var2  ?var3\r\n"
-				+ "              FILTER ( ?var3 != <http://www.wikidata.org/entity/Q5> )\r\n"
-				+ "            }\r\n"
-				+ "            ?var3  <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "      }\r\n"
-				+ "    UNION\r\n"
-				+ "      {?var4  <http://www.wikidata.org/prop/direct/P50>  <http://www.wikidata.org/entity/Q20895241>\r\n"
-				+ "          { ?var4  <http://www.wikidata.org/prop/direct/P921>  _:b0 .\r\n"
-				+ "            _:b0   <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "        UNION\r\n"
-				+ "          { ?var5  <http://www.wikidata.org/prop/direct/P50>  ?var4 ;\r\n"
-				+ "                   <http://www.wikidata.org/prop/direct/P18>  ?var1\r\n"
-				+ "          }\r\n"
-				+ "      }\r\n"
 				+ "  }";
 		
 		String q4 = "SELECT  ?var1 ?var2 ?var3 ?var4\r\n"
@@ -1082,26 +1036,57 @@ public class ExperimentOne {
 				+ "    }\r\n"
 				+ "  }";
 		
+		String q5 = "SELECT  ?var1 ?var2 ?var3 ?var4\r\n"
+				+ "WHERE\r\n"
+				+ "  { { ?var2  <http://www.wikidata.org/prop/direct/P2678>  ?var1 ;\r\n"
+				+ "             ?p ?o .\r\n"
+				+ "      ?var3  <http://www.wikidata.org/prop/direct/P2678>  ?var4\r\n"
+				+ "    }\r\n"
+				+ "  }";
+		
+		String q6 = "SELECT  ?var1 ?var2Label ?var3\r\n"
+				+ "WHERE\r\n"
+				+ "  { ?var1  <http://www.wikidata.org/prop/direct/P106>  <http://www.wikidata.org/entity/Q3665646> ;\n"
+				+ "           <http://www.wikidata.org/prop/direct/P27>   <http://www.wikidata.org/entity/Q30> .\n"
+				+ "	   ?var3  <http://www.wikidata.org/prop/direct/P106>  <http://www.wikidata.org/entity/Q3665646> .\n"
+				+ "  }";
+		
+		String q7 = "SELECT DISTINCT  ?var1 ?var2 ?var3\r\n"
+				+ "WHERE\r\n"
+				+ "  { ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q1248784> ;\r\n"
+				+ "           ?var3                 <http://www.wikidata.org/entity/Q31> ;\r\n"
+				+ "			  <http://www.wikidata.org/prop/direct/P106>  <http://www.wikidata.org/entity/Q3665646>"
+				+ "           <http://www.wikidata.org/prop/direct/P625>  ?var2\r\n"
+				+ "  }";
+		
+		String q10 = "SELECT  ?var1\r\n"
+				+ "WHERE\r\n"
+				+ "  { ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q11424> ;\r\n"
+				+ "           <http://www.wikidata.org/prop/direct/P495>  <http://www.wikidata.org/entity/Q15180>\r\n"
+				+ "    MINUS\r\n"
+				+ "      { ?var1  <http://www.wikidata.org/prop/direct/P2678>  ?var2 }\r\n"
+				+ "  }";
+		
 		ds.end();
 		
-		/*final BufferedReader tsv = 
+		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
-		*/
+		/*
 		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
+		*/
+		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
-		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
-		
-		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NullQueriesTwo.txt"));
+		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\CacheQueries.txt"));
 		
 		/*
 		for (int i = 1; i <= 2; i++) {
@@ -1109,7 +1094,7 @@ public class ExperimentOne {
 		}
 		*/
 		
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 5000; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
@@ -1117,7 +1102,7 @@ public class ExperimentOne {
 						ds.begin(ReadWrite.READ);
 						
 						System.out.println("Reading query " + j++);
-						String line = q4;
+						String line = tsv.readLine();
 						
 						long startLine = System.nanoTime();
 						
@@ -1138,6 +1123,7 @@ public class ExperimentOne {
 						String bo = "Time before optimizing: " + (beforeOptimize - startLine);
 						
 						Op opjoin = Algebra.optimize(cachedOp);
+						//Q10 no cachea
 						//System.out.println(opjoin);
 						
 						long start = System.nanoTime();
@@ -1151,15 +1137,16 @@ public class ExperimentOne {
 						ResultSet rs = qFinalExec.execSelect();
 						
 						int cacheResultAmount = 0;
-						System.out.println(rs.next());
+						//System.out.println("Check boolean");
+						//System.out.println(rs.hasNext());
 						
 						while (rs.hasNext()) {
 							rs.next();
 							cacheResultAmount++;
-							System.out.println(cacheResultAmount);
+							//System.out.println(cacheResultAmount);
 						}
 						
-						System.out.println(cacheResultAmount);
+						//System.out.println(cacheResultAmount);
 						
 						long stop = System.nanoTime();
 						String ar = "Time after reading all results: " + (stop - startLine);
@@ -1177,7 +1164,7 @@ public class ExperimentOne {
 							w.println("Query " + (j-1) + " Results with cache: " + cacheResultAmount);
 							w.println("");
 						}
-					} catch (Exception e) {e.printStackTrace(System.out);}
+					} catch (Exception e) {}//e.printStackTrace(System.out);}
 				}
 			};
 			

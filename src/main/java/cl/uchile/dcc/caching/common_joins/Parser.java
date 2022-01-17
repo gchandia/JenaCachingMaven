@@ -52,18 +52,35 @@ public class Parser {
 		String decQuery = URLDecoder.decode(spQuery, "UTF-8");
 		
 		Pattern qPattern = Pattern.compile("SELECT .*}+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+		Pattern qPatternTwo = Pattern.compile("SELECT .*}+ LIMIT [0-9]+", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 		Matcher m = qPattern.matcher(decQuery);
+		Matcher mTwo = qPatternTwo.matcher(decQuery);
 		Query q;
 		
 		if (m.find()) {
 			String myQuery = m.group(0);
-			
+			q = QueryFactory.create(prefix + myQuery, Syntax.syntaxARQ);
+		} else if (mTwo.find()) {
+			String myQuery = mTwo.group(0);
 			q = QueryFactory.create(prefix + myQuery, Syntax.syntaxARQ);
 		} else {
 			q = null;
 		}
 		
 		return q;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Parser p = new Parser();
+		String s = "SELECT  ?var1 ?var2 ?var3 ?var4\r\n"
+				+ "WHERE\r\n"
+				+ "  { { ?var2  <http://www.wikidata.org/prop/direct/P2949>  ?var1 ;\r\n"
+				+ "             <http://www.wikidata.org/prop/direct/P22>  ?var3 .\r\n"
+				+ "      ?var3  <http://www.wikidata.org/prop/direct/P2949>  ?var4\r\n"
+				+ "    }\r\n"
+				+ "  }";
+		Query q = p.parseDbPedia(s);
+		System.out.println(q);
 	}
 
 }
