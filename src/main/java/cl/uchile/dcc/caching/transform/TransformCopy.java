@@ -23,6 +23,7 @@ import org.apache.jena.sparql.algebra.op.OpDistinct;
 import org.apache.jena.sparql.algebra.op.OpExt;
 import org.apache.jena.sparql.algebra.op.OpExtend;
 import org.apache.jena.sparql.algebra.op.OpFilter;
+import org.apache.jena.sparql.algebra.op.OpFind;
 import org.apache.jena.sparql.algebra.op.OpGraph;
 import org.apache.jena.sparql.algebra.op.OpGroup;
 import org.apache.jena.sparql.algebra.op.OpJoin;
@@ -165,6 +166,11 @@ public class TransformCopy implements Transform
 		// TODO Auto-generated method stub
 		return xform(arg0, arg1);
 	}
+  @Override
+  public Op transform(OpFind arg0) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }
 
 /*

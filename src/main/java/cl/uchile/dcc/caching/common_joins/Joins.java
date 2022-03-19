@@ -33,7 +33,7 @@ public class Joins {
 		return clear;
 	}
 	
-	private static boolean shareVar(Triple a, Triple b) {
+	public static boolean shareVar(Triple a, Triple b) {
 		
 		boolean flagVarSA = a.getSubject().isVariable();
 		boolean flagVarPA = a.getPredicate().isVariable();

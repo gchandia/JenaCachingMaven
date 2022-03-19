@@ -43,7 +43,7 @@ import cl.uchile.dcc.main.SingleQuery;
 public class ExperimentOne {
 	
 	private static SolutionCache myCache;
-	private static String myModel = "D:\\tmp\\WikiDB";
+	private static String myModel = "C:\\Thesis\\WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	private static int j = 1;
 	
@@ -71,12 +71,12 @@ public class ExperimentOne {
 		ds.begin(ReadWrite.READ);
 		
 		// Define model and Query
-		Model model = ds.getDefaultModel();
+		final Model model = ds.getDefaultModel();
 		
 		// Initialize a new Solution Cache
 		myCache = new SolutionCache();
 		
-		
+		/*
 		String s11 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -440,7 +440,7 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q25Bgps.get(0), q25Results);
-		
+		*/
 		
 		String s26 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
@@ -466,7 +466,7 @@ public class ExperimentOne {
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q26Bgps.get(0), q26Results);
 		
-		
+		/*
 		String s27 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
 				+ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -1020,7 +1020,7 @@ public class ExperimentOne {
 		//System.out.println(r.size());
 		//System.out.println(ResultSetFormatter.asText(q10Results));
 		myCache.cache(q50Bgps.get(0), q50Results);
-		
+		*/
 		
 		String q1 = "SELECT  *\n"
 				+ "WHERE\n"
@@ -1067,6 +1067,13 @@ public class ExperimentOne {
 				+ "      { ?var1  <http://www.wikidata.org/prop/direct/P2678>  ?var2 }\r\n"
 				+ "  }";
 		
+		String q2 = "SELECT DISTINCT  ?var1 ?var2 ?var3\r\n"
+        		  + "WHERE\r\n"
+        		  + "{ ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q1248784>;\r\n"
+        		  + "         ?var3                                      <http://www.wikidata.org/entity/Q31>;\r\n"
+        		  + "         <http://www.wikidata.org/prop/direct/P625> ?var2\r\n"
+        		  + "}";
+		
 		ds.end();
 		
 		final BufferedReader tsv = 
@@ -1074,7 +1081,7 @@ public class ExperimentOne {
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
-												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
+												new File("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz")))));
 		/*
 		final BufferedReader tsv = 
 				new BufferedReader (
@@ -1084,9 +1091,9 @@ public class ExperimentOne {
 												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
 		*/
 		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		
-		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\CacheQueries.txt"));
+		final PrintWriter w = new PrintWriter(new FileWriter("C:\\Thesis\\tmp\\OneQuery1.txt"));
 		
 		/*
 		for (int i = 1; i <= 2; i++) {
@@ -1094,7 +1101,7 @@ public class ExperimentOne {
 		}
 		*/
 		
-		for (int i = 1; i <= 5000; i++) {
+		for (int i = 1; i <= 1; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
@@ -1102,7 +1109,7 @@ public class ExperimentOne {
 						ds.begin(ReadWrite.READ);
 						
 						System.out.println("Reading query " + j++);
-						String line = tsv.readLine();
+						String line = q2;
 						
 						long startLine = System.nanoTime();
 						

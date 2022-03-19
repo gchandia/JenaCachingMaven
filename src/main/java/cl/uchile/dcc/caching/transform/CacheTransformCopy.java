@@ -84,6 +84,7 @@ public class CacheTransformCopy extends TransformCopy {
 	
 	public Op transform(OpBGP bgp) {
 		//System.out.println("Bgp is:\n" + bgp);
+		//myCache.printConstants();
 		
 		// Get query bgps
 		ArrayList<OpBGP> bgps = ExtractBgps.getSplitBgps(bgp);
@@ -94,6 +95,7 @@ public class CacheTransformCopy extends TransformCopy {
 		
 		// Filter bgps that have constants in the cache
 		bgps = filterBgps(bgps);
+		//System.out.println("Filtered bgps are: " + bgps);
 		
 		// Get all query subbgps of size two and more
 		ArrayList<ArrayList<OpBGP>> subBgps = Joins.getSubBGPs(bgps);

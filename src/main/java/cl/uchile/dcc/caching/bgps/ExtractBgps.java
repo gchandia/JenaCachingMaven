@@ -1,5 +1,8 @@
 package cl.uchile.dcc.caching.bgps;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -29,6 +32,33 @@ public class ExtractBgps {
 		return varMap;
 	}
 	
+	public static String bytesToHex(byte[] hash) {
+	  StringBuilder hexString = new StringBuilder(2 * hash.length);
+	  for (int i = 0; i < hash.length; i++) {
+	    String hex = Integer.toHexString(0xff & hash[i]);
+	    if(hex.length() == 1) {
+	      hexString.append('0');
+	    }
+	    hexString.append(hex);
+	  }
+	  return hexString.toString();
+	}
+	
+	public static String hash256(String input) {
+	  MessageDigest digest = null;
+      try {
+        digest = MessageDigest.getInstance("SHA-256");
+      } catch (NoSuchAlgorithmException e) {}
+      byte[] encodedhash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+      String hex = bytesToHex(encodedhash);
+      return hex;
+	}
+	
+	public static String encodePath(String path) {
+	  String pred = "http://path.org/";
+	  return pred + hash256(path);
+	}
+	
 	public static ArrayList<OpBGP> getBgps(Op op){
 		ArrayList<OpBGP> bgps = new ArrayList<OpBGP>();
 		getBgps(op,bgps);
@@ -47,8 +77,11 @@ public class ExtractBgps {
 		}else if (op instanceof OpPath) {
 			TriplePath path = ((OpPath)op).getTriplePath();
 			BasicPattern bp = new BasicPattern();
-			Triple nt = Triple.create(path.getSubject(), NodeFactory.createURI(path.getPath().toString()), path.getObject());
-			bp.add(nt);
+			//Triple nt = Triple.create(path.getSubject(), NodeFactory.createURI(path.getPath().toString()), path.getObject());
+			Triple nt = Triple.create(path.getSubject(), 
+			                          NodeFactory.createURI(encodePath(path.getPath().toString())), 
+			                          path.getObject());
+            bp.add(nt);
 			bgps.add(new OpBGP(bp));
 		} else if(op instanceof Op1) {
 			getBgps(((Op1)op).getSubOp(),bgps);
@@ -70,10 +103,8 @@ public class ExtractBgps {
 	 */
 	public static void getSplitBgps(Op op, ArrayList<OpBGP> splitbgps) {
 		if (op instanceof OpBGP) {
-			ArrayList<OpBGP> l = new ArrayList<OpBGP>();
 			splitbgps.add((OpBGP)op);
 		} else if (op instanceof OpPath) {
-			ArrayList<OpBGP> l = new ArrayList<OpBGP>();
 			TriplePath path = ((OpPath)op).getTriplePath();
 			BasicPattern bp = new BasicPattern();
 			Triple nt = Triple.create(path.getSubject(), NodeFactory.createURI(path.getPath().toString()), path.getObject());
@@ -184,6 +215,21 @@ public class ExtractBgps {
 	}
 	
 	public static void main(String[] args) {
-		
+	  String s = "SELECT DISTINCT  ?var1 "
+	          + "WHERE"
+	          + "{ BIND(<http://www.wikidata.org/entity/Q62155> AS ?var2)"
+	          + "?var2 (<http://www.wikidata.org/prop/direct/P279>)* ?var1"
+	          + "}";
+	  Query q = QueryFactory.create(s);
+	  Op op = Algebra.compile(q);
+	  Op op2 = ((Op1) op).getSubOp();
+	  Op op3 = ((Op1) op2).getSubOp();
+	  //Op op3L = ((Op2) op3).getLeft();
+	  Op op3R = ((Op2) op3).getRight();
+	  System.out.println(op3R);
+	  TriplePath path = ((OpPath)op3R).getTriplePath();
+	  System.out.println(path.getPath());
+	  System.out.println(encodePath(path.getPath().toString()));
+	  System.out.println(getBgps(op3R));
 	}
 }

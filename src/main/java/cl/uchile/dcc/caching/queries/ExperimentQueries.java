@@ -62,7 +62,7 @@ public class ExperimentQueries {
 	
 	public static void main(String[] args) throws Exception {
 		// Read my TDB dataset
-		String dbDir = "D:\\tmp\\WikiDB";
+		String dbDir = "C:\\Thesis\\WikiDB";
 		Dataset ds = TDBFactory.createDataset(dbDir);
 		// Write if I wanna write, but I'll be using read to query over it mostly
 		ds.begin(ReadWrite.READ);
@@ -74,7 +74,7 @@ public class ExperimentQueries {
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
-												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
+												new File("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz")))));
 		
 		/*
 		BufferedReader tsv = 
@@ -84,11 +84,11 @@ public class ExperimentQueries {
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
 		*/
-		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
-		PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NoCacheQueries.txt"));
+		PrintWriter w = new PrintWriter(new FileWriter("C:\\Thesis\\tmp\\NoCacheQueries10000_zero.txt"));
 		
-		for (int i = 1; i <= 5000; i++) {
+		for (int i = 1; i <= 10000; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
@@ -112,7 +112,6 @@ public class ExperimentQueries {
 						String bo = "Time before optimizing: " + (beforeOptimize - startLine);
 						
 						alg = Algebra.optimize(alg);
-						//System.out.println(alg);
 						
 						long start = System.nanoTime();
 						String br = "Time before reading results: " + (start - startLine);
@@ -130,7 +129,7 @@ public class ExperimentQueries {
 						long stop = System.nanoTime();
 						String ar = "Time after reading all results: " + (stop - startLine);
 						
-						if (resultAmount != 0) {
+						if (resultAmount >= 0) {
 							System.out.println("FOUND ONE");
 							w.println("Info for query number " + (j-1));
 						    w.println(q);
