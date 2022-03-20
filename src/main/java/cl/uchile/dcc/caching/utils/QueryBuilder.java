@@ -14,7 +14,7 @@ import org.apache.jena.sparql.syntax.ElementGroup;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.common_joins.Joins;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class QueryBuilder {
 	

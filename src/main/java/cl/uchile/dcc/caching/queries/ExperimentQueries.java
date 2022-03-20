@@ -62,19 +62,19 @@ public class ExperimentQueries {
 	
 	public static void main(String[] args) throws Exception {
 		// Read my TDB dataset
-		String dbDir = "C:\\Thesis\\WikiDB";
-		Dataset ds = TDBFactory.createDataset(dbDir);
+		String dbDir = "D:\\tmp\\WikiDB";
+		final Dataset ds = TDBFactory.createDataset(dbDir);
 		// Write if I wanna write, but I'll be using read to query over it mostly
 		ds.begin(ReadWrite.READ);
 		// Define model and Query
-		Model model = ds.getDefaultModel();
+		final Model model = ds.getDefaultModel();
 		
-		BufferedReader tsv = 
+		final BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
 								new GZIPInputStream(
 										new FileInputStream(
-												new File("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz")))));
+												new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
 		
 		/*
 		BufferedReader tsv = 
@@ -84,11 +84,11 @@ public class ExperimentQueries {
 										new FileInputStream(
 												new File("D:\\wikidata_logs\\NullQueries2.tsv.gz")))));
 		*/
-		System.out.println(getNumberOfCompressedLines("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz"));
+		System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz"));
 		//System.out.println(getNumberOfCompressedLines("D:\\wikidata_logs\\NullQueries2.tsv.gz"));
-		PrintWriter w = new PrintWriter(new FileWriter("C:\\Thesis\\tmp\\NoCacheQueries10000_zero.txt"));
+		final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\NoCacheQueriesTest.txt"));
 		
-		for (int i = 1; i <= 10000; i++) {
+		for (int i = 1; i <= 10; i++) {
 			final Runnable stuffToDo = new Thread() {
 				@Override
 				public void run() {
@@ -141,7 +141,10 @@ public class ExperimentQueries {
 							w.println("");
 						}
 						
-					} catch (Exception e) {}
+					} catch (Exception e) {w.println("Info for query number " + (j - 1)); 
+                    					   e.printStackTrace(w); 
+                    					   w.println();
+                    }
 				}
 			};
 			

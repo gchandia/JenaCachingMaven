@@ -47,7 +47,7 @@ import cl.uchile.dcc.caching.cache.SolutionCache;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentPolicyFileLoop {
   private static SolutionCache myCache;
@@ -111,7 +111,6 @@ public class ExperimentPolicyFileLoop {
   
   Comparator<ArrayList<OpBGP>> subQueryComparator = new Comparator<ArrayList<OpBGP>>()
   {
-      @Override
       public int compare(ArrayList<OpBGP> o1, ArrayList<OpBGP> o2)
       {
           return Integer.compare(o2.size(), o1.size());
@@ -437,7 +436,7 @@ public class ExperimentPolicyFileLoop {
     
     final PrintWriter w = new PrintWriter(new FileWriter("C:\\Thesis\\tmp\\DeleteCache10.txt"));
     
-    ExperimentPolicyFile ep = new ExperimentPolicyFile();
+    final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
     //1500 queries
     // i1 = 1, i2 = 100     DONE

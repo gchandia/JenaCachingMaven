@@ -9,15 +9,13 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.op.OpBGP;
-import org.apache.jena.sparql.resultset.ResultSetMem;
 import org.apache.jena.tdb.TDBFactory;
 
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 
 public class FillCache {

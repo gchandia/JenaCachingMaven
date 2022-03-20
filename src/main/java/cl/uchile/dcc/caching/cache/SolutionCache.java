@@ -157,10 +157,6 @@ public class SolutionCache {
 	  //System.out.println("Attempting to cache table with bgp " + bgp);
 	  System.out.println("Attempting to cache table...");
 	  
-	  //Delete from cache using LRU policy
-      //Using limit size 100, results size limit of 1 million
-      this.cleanCache();
-	  
 	  Table table = new TableN();
 	  // TEST
 	  int i = 0;
@@ -190,6 +186,7 @@ public class SolutionCache {
 	  //Delete from cache using LRU policy
       //Using limit size 100, results size limit of 1 million
       this.cleanCache();
+      
 	  return true;
 	}
 	

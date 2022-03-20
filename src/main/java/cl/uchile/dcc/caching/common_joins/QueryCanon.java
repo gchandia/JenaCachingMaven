@@ -6,7 +6,7 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.Syntax;
 
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 
 /**

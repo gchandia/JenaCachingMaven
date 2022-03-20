@@ -24,7 +24,7 @@ import org.apache.jena.sparql.expr.ExprException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.utils.QueryBuilder;
 import cl.uchile.dcc.caching.utils.QueryModifier;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 
 public class Reader {

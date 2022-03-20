@@ -45,7 +45,7 @@ import cl.uchile.dcc.caching.cache.SolutionCache;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentPolicyFile {
   private static SolutionCache myCache;
@@ -55,7 +55,7 @@ public class ExperimentPolicyFile {
   private static ArrayList<OpBGP> myBgpSubQueries;
   private static ArrayList<Query> cachedSubQueries;
   private static ArrayList<OpBGP> cachedBgpSubQueries;
-  private static String myModel = "C:\\Thesis\\WikiDB";
+  private static String myModel = "D:\\tmp\\WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
   private static int totalTps = 0;
@@ -109,7 +109,6 @@ public class ExperimentPolicyFile {
   
   Comparator<ArrayList<OpBGP>> subQueryComparator = new Comparator<ArrayList<OpBGP>>()
   {
-      @Override
       public int compare(ArrayList<OpBGP> o1, ArrayList<OpBGP> o2)
       {
           return Integer.compare(o2.size(), o1.size());
@@ -377,7 +376,20 @@ public class ExperimentPolicyFile {
     }
   }
   
+  static void cleanBgpSubQueries() {
+	ArrayList<OpBGP> cleanMyBgpSubQueries = new ArrayList<OpBGP>();
+	for (int i = 0; i < myBgpSubQueries.size(); i++) {
+	  OpBGP b = myBgpSubQueries.get(i);
+	  if (b != null) {
+		cleanMyBgpSubQueries.add(b);
+	  }
+	}
+	myBgpSubQueries = cleanMyBgpSubQueries;
+  }
+  
   static void checkBgpQueue(OpBGP bgp) {
+	cleanBgpSubQueries();
+	
     if (myBgpSubQueries.isEmpty()) {
       checkedBgpSubQueries.add(bgp);
       myBgpSubQueries.add(bgp);
@@ -394,6 +406,7 @@ public class ExperimentPolicyFile {
     }
     
     for (OpBGP b : myBgpSubQueries) {
+      //System.out.println("b EQUALS " + b);
       if (b.equals(bgp)){
         cacheBgpQuery(bgp);
         checkedBgpSubQueries.add(bgp);
@@ -434,11 +447,11 @@ public class ExperimentPolicyFile {
                 new InputStreamReader(
                         new GZIPInputStream(
                                 new FileInputStream(
-                                        new File("C:\\Thesis\\2017-07-10_2017-08-06_organic.tsv.gz")))));
+                                        new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("C:\\Thesis\\tmp\\DeleteCache_Limit_100_Queries_10000_debug.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\DeleteCacheTestNew.txt"));
     
-    ExperimentPolicyFile ep = new ExperimentPolicyFile();
+    final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
     //1500 queries
     // i1 = 1, i2 = 100     DONE
@@ -476,7 +489,7 @@ public class ExperimentPolicyFile {
     // i1 = 4, i2 = 10000   DONE
     // i1 = 4, i2 = 100000  DONE
     
-    for (int i = 1; i <= 10000; i++) {
+    for (int i = 1; i <= 500; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -505,7 +518,9 @@ public class ExperimentPolicyFile {
               // If there are 10 or less TPs in the query
               if (list.size() <= 10) {
                 ArrayList<ArrayList<OpBGP>> subQueries = ep.getSubQueries(list);
+                //Sort subqueries from biggest to smallest
                 Collections.sort(subQueries, ep.subQueryComparator);
+                //Remove empty subquery
                 subQueries.remove(subQueries.size() - 1);
                 subQueries = ep.removeDisconnectedBgps(subQueries);
                 ArrayList<OpBGP> bgpsq = ep.canonicaliseBgpList(subQueries);
@@ -560,9 +575,9 @@ public class ExperimentPolicyFile {
                 w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
                 w.println("");
               }
-            } catch (Exception e) {w.println("Info for query number " + (queryNumber - 1)); 
-                                   e.printStackTrace(w); 
-                                   w.println();}
+            } catch (Exception e) {}//w.println("Info for query number " + (queryNumber - 1)); 
+                                   //e.printStackTrace(w); 
+                                   //w.println();}
         }
     };
     

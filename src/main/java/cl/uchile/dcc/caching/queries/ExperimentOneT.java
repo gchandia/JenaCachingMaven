@@ -30,14 +30,13 @@ import org.apache.jena.sparql.algebra.OpAsQuery;
 import org.apache.jena.sparql.algebra.Transform;
 import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.algebra.op.OpBGP;
-import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.SolutionCache;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentOneT {
 	

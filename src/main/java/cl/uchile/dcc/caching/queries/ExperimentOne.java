@@ -31,14 +31,13 @@ import org.apache.jena.sparql.algebra.OpAsQuery;
 import org.apache.jena.sparql.algebra.Transform;
 import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.algebra.op.OpBGP;
-import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.SolutionCache;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentOne {
 	
@@ -1067,7 +1066,7 @@ public class ExperimentOne {
 				+ "      { ?var1  <http://www.wikidata.org/prop/direct/P2678>  ?var2 }\r\n"
 				+ "  }";
 		
-		String q2 = "SELECT DISTINCT  ?var1 ?var2 ?var3\r\n"
+		final String q2 = "SELECT DISTINCT  ?var1 ?var2 ?var3\r\n"
         		  + "WHERE\r\n"
         		  + "{ ?var1  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q1248784>;\r\n"
         		  + "         ?var3                                      <http://www.wikidata.org/entity/Q31>;\r\n"

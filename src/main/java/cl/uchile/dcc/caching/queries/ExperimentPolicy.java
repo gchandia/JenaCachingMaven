@@ -27,7 +27,7 @@ import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.SolutionCache;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentPolicy {
   private static SolutionCache myCache;
@@ -90,7 +90,6 @@ public class ExperimentPolicy {
   
   Comparator<ArrayList<OpBGP>> subQueryComparator = new Comparator<ArrayList<OpBGP>>()
   {
-      @Override
       public int compare(ArrayList<OpBGP> o1, ArrayList<OpBGP> o2)
       {
           return Integer.compare(o2.size(), o1.size());

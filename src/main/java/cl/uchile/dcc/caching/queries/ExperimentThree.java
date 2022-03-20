@@ -23,14 +23,13 @@ import org.apache.jena.sparql.algebra.OpAsQuery;
 import org.apache.jena.sparql.algebra.Transform;
 import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.algebra.op.OpBGP;
-import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.SolutionCache;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
-import cl.uchile.dcc.main.SingleQuery;
+import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentThree {
 	private static SolutionCache myCache;
@@ -43,7 +42,7 @@ public class ExperimentThree {
 		ds.begin(ReadWrite.READ);
 		
 		// Define model and Query
-		Model model = ds.getDefaultModel();
+		final Model model = ds.getDefaultModel();
 		
 		// Initialize a new Solution Cache
 		myCache = new SolutionCache();
@@ -72,7 +71,7 @@ public class ExperimentThree {
 		myCache.cache(q50Bgps.get(0), q50Results);
 		
 		
-		String q1 = "SELECT  *\n"
+		final String q1 = "SELECT  *\n"
 				+ "WHERE\n"
 				+ "  { ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251> .\n"
 				//+ "    ?x  <http://www.wikidata.org/prop/direct/P31>  <http://www.wikidata.org/entity/Q3294251>\n"
