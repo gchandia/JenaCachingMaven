@@ -13,21 +13,21 @@ import org.apache.jena.sparql.algebra.op.OpQuad;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.bgps.ManipulateBgps;
-import cl.uchile.dcc.caching.cache.SolutionCache;
+import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.common_joins.Joins;
 
 public class CacheTransformCopy extends TransformCopy {
-	private SolutionCache myCache;
+	private Cache myCache;
 	private long startLine = 0;
 	private String solution = "";
 	
 	private ArrayList<OpBGP> nonFilteredBgps = new ArrayList<OpBGP>();
 	
-	public CacheTransformCopy(SolutionCache cache) {
+	public CacheTransformCopy(Cache cache) {
 		this.myCache = cache;
 	}
 	
-	public CacheTransformCopy(SolutionCache cache, long startLine) {
+	public CacheTransformCopy(Cache cache, long startLine) {
 		this.myCache = cache;
 		this.startLine = startLine;
 	}
@@ -149,7 +149,7 @@ public class CacheTransformCopy extends TransformCopy {
 				ec = "ENTERED CACHE";
 				long whenCache = System.nanoTime();
 				br = "Time before retrieving from cache: " + (whenCache - startLine);
-				cachedBgps = myCache.retrieveCacheV2(cachedBgps, bgp, bgpList, vars, startLine);
+				cachedBgps = myCache.retrieveCache(cachedBgps, bgp, bgpList, vars, startLine);
 				sol = myCache.getSolution();
 				long afterCache = System.nanoTime();
 				ar = "Time after retrieving from cache: " + (afterCache - startLine);

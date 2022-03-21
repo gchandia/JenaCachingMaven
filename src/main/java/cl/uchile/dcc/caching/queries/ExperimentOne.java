@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.jena.query.Dataset;
@@ -34,14 +33,15 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
-import cl.uchile.dcc.caching.cache.SolutionCache;
+import cl.uchile.dcc.caching.cache.Cache;
+import cl.uchile.dcc.caching.cache.LRUCache;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
 import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentOne {
 	
-	private static SolutionCache myCache;
+	private static Cache myCache;
 	private static String myModel = "C:\\Thesis\\WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	private static int j = 1;
@@ -73,7 +73,7 @@ public class ExperimentOne {
 		final Model model = ds.getDefaultModel();
 		
 		// Initialize a new Solution Cache
-		myCache = new SolutionCache();
+		myCache = new LRUCache(100, 1000000);
 		
 		/*
 		String s11 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"

@@ -41,14 +41,15 @@ import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.tdb.TDBFactory;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
-import cl.uchile.dcc.caching.cache.SolutionCache;
+import cl.uchile.dcc.caching.cache.Cache;
+import cl.uchile.dcc.caching.cache.LRUCache;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
 import cl.uchile.dcc.qcan.main.SingleQuery;
 
 public class ExperimentPolicyFile {
-  private static SolutionCache myCache;
+  private static Cache myCache;
   private static ArrayList<Query> checkedSubQueries;
   private static ArrayList<OpBGP> checkedBgpSubQueries;
   private static ArrayList<Query> mySubQueries;
@@ -69,7 +70,7 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    myCache = new SolutionCache();
+    myCache = new LRUCache(100, 1000000);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
   }
@@ -336,7 +337,7 @@ public class ExperimentPolicyFile {
     ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(q));
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
-    if (myCache.cache(qBgps.get(0), qResults)) myCache.cacheConstantsV2(q);
+    if (myCache.cache(qBgps.get(0), qResults)) myCache.cacheConstants(q);
     ds.end();
   }
   
@@ -449,7 +450,7 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\DeleteCacheTestNew.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\LRUCacheTest.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
@@ -571,7 +572,6 @@ public class ExperimentPolicyFile {
                 w.println(ar);
                 w.println("Cache size is: " + myCache.cacheSize());
                 w.println("Results size is: " + myCache.resultsSize());
-                w.println(myCache.getKeys());
                 w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
                 w.println("");
               }

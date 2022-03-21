@@ -25,7 +25,8 @@ import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.tdb.TDBFactory;
 
-import cl.uchile.dcc.caching.cache.SolutionCache;
+import cl.uchile.dcc.caching.cache.Cache;
+import cl.uchile.dcc.caching.cache.LRUCache;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
 
@@ -55,10 +56,10 @@ public class ExperimentOneAH {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		SolutionCache myCache;
+		Cache myCache;
 		
 		// Initialize a new Solution Cache
-		myCache = new SolutionCache();
+		myCache = new LRUCache(100, 1000000);
 		
 		final BufferedReader tsv = 
 				new BufferedReader (
@@ -111,14 +112,14 @@ public class ExperimentOneAH {
 	
 	public static class RunQueryThread extends Thread {
 		final Dataset ds;
-		final SolutionCache cache;
+		final Cache cache;
 		final String query;
 		final int qid;
 		
 		final StringBuffer sblog = new StringBuffer();
 		int cacheResultAmount;
 		
-		public RunQueryThread(Dataset d, SolutionCache c, String q, int id) {
+		public RunQueryThread(Dataset d, Cache c, String q, int id) {
 			this.ds = d;
 			this.cache = c;
 			this.query = q;

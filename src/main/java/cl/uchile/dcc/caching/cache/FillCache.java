@@ -19,7 +19,7 @@ import cl.uchile.dcc.qcan.main.SingleQuery;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 
 public class FillCache {
-	private SolutionCache myCache;
+	private Cache myCache;
 	private String myModel = "D:\\tmp\\WikiDB";
 	
 	public FillCache() throws Exception {
@@ -33,7 +33,7 @@ public class FillCache {
 		Model model = ds.getDefaultModel();
 		
 		// Initialize a new Solution Cache
-		myCache = new SolutionCache();
+		myCache = new LRUCache(100, 1000000);
 		
 		String s11 = "PREFIX wiki: <http://www.wikidata.org/prop/direct/>\n"
 				+ "PREFIX we: <http://www.wikidata.org/entity/>\n"
@@ -972,7 +972,7 @@ public class FillCache {
 		this.myModel = s;
 	}
 	
-	public SolutionCache getCache() {
+	public Cache getCache() {
 		return this.myCache;
 	}
 	
