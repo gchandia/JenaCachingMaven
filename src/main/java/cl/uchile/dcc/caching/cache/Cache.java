@@ -1,6 +1,7 @@
 package cl.uchile.dcc.caching.cache;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.jena.graph.Node;
@@ -25,4 +26,6 @@ public interface Cache {
             						   Map<String, String> varMap, 
             						   long startLine);
 	public boolean isBgpInCache(OpBGP input);
+	//For testing purposes only
+	public LinkedHashMap<OpBGP, Integer> getLinkedMap();
 }

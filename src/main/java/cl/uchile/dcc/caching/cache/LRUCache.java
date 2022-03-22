@@ -48,4 +48,9 @@ public class LRUCache extends AbstractCache {
     
     removeConstants(qu);
   }
+  
+  @Override
+  public LinkedHashMap<OpBGP, Integer> getLinkedMap() {
+	return this.LRUHits;
+  }
 }

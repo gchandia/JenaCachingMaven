@@ -1,11 +1,13 @@
 package cl.uchile.dcc.caching.tests;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class HelloWorld {
 	private static HashMap<String, Integer> ints = new HashMap<String, Integer>();
 	private static LinkedHashMap<String, Integer> sortedInts = new LinkedHashMap<String, Integer>();
+	private static ArrayList<String> blocks = new ArrayList<String>();
 	
 	public static void main(String[] args) {
 		System.out.println("Hello world!");
@@ -22,8 +24,16 @@ public class HelloWorld {
 		sortedInts.put("Five", 5);
 		sortedInts.put("Three", 6);
 		
-		System.out.println(ints);
-		System.out.println(sortedInts);
-		System.out.println(sortedInts.remove("Four"));
+		blocks.add("1");
+		blocks.add("2");
+		blocks.add("3");
+		blocks.add("4");
+		blocks.add("5");
+		
+		System.out.println(blocks);
+		
+		blocks.add("3");
+		
+		System.out.println(blocks);
 	}
 }

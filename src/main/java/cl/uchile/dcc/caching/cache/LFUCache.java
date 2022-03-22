@@ -59,4 +59,8 @@ public class LFUCache extends AbstractCache {
 	    
 	removeConstants(qu);
   }
+  
+  public LinkedHashMap<OpBGP, Integer> getLinkedMap() {
+	return this.LFUHits;
+  }
 }
