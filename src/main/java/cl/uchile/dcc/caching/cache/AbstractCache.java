@@ -32,25 +32,19 @@ import cl.uchile.dcc.caching.bgps.ExtractBgps;
 public abstract class AbstractCache implements Cache {
 	protected HashMap<OpBGP, OpTable> queryToSolution;
 	private int itemLimit;
-	private int resultsLimit;
-	protected Set<Node> subjects;
-    protected Set<Node> predicates;
-	protected Set<Node> objects;
-	protected Map<Node, Set<Query>> mapSubjects;
-    protected Map<Node, Set<Query>> mapPredicates;
-	protected Map<Node, Set<Query>> mapObjects;
+	protected int resultsLimit;
+	protected Map<Node, Set<String>> mapSubjects;
+    protected Map<Node, Set<String>> mapPredicates;
+	protected Map<Node, Set<String>> mapObjects;
 	private String solution;
 	
 	public AbstractCache(int itemLimit, int resultsLimit) {
 		this.queryToSolution = new HashMap<OpBGP, OpTable>();
 		this.itemLimit = itemLimit;
 		this.resultsLimit = resultsLimit;
-		this.subjects = new HashSet<Node>();
-        this.predicates = new HashSet<Node>();
-		this.objects = new HashSet<Node>();
-		this.mapSubjects = new HashMap<Node, Set<Query>>();
-		this.mapPredicates = new HashMap<Node, Set<Query>>();
-		this.mapObjects = new HashMap<Node, Set<Query>>();
+		this.mapSubjects = new HashMap<Node, Set<String>>();
+		this.mapPredicates = new HashMap<Node, Set<String>>();
+		this.mapObjects = new HashMap<Node, Set<String>>();
 		this.solution = "";
 	}
 	
@@ -68,7 +62,7 @@ public abstract class AbstractCache implements Cache {
 	  return results;
 	}
 	
-	protected abstract void addToCache(OpBGP bgp, OpTable opt);
+	protected abstract boolean addToCache(OpBGP bgp, OpTable opt);
 	
 	protected void cleanCache() {
 	  while (this.queryToSolution.size() > this.itemLimit) {
@@ -87,57 +81,41 @@ public abstract class AbstractCache implements Cache {
 	  this.solution = input;
 	}
 	
-	public void printConstants() {
-	  System.out.println(subjects);
-	  System.out.println(predicates);
-	  System.out.println(objects);
-	}
-	
 	public void printMapConstants() {
 	  System.out.println(mapSubjects);
 	  System.out.println(mapPredicates);
 	  System.out.println(mapObjects);
 	}
 	
-	public Set<Node> getSubjects() {
-	  return this.subjects;
-	}
-	
-	public Set<Node> getPredicates() {
-	  return this.predicates;
-	}
-	
-	public Set<Node> getObjects() {
-	  return this.objects;
-	}
-	
-	public Map<Node, Set<Query>> getMapSubjects() {
+	public Map<Node, Set<String>> getMapSubjects() {
 	  return this.mapSubjects;
 	}
 	
-	public Map<Node, Set<Query>> getMapPredicates() {
+	public Map<Node, Set<String>> getMapPredicates() {
 	  return this.mapPredicates;
 	}
 	
-	public Map<Node, Set<Query>> getMapObjects() {
+	public Map<Node, Set<String>> getMapObjects() {
 	  return this.mapObjects;
 	}
 	
 	public boolean isInSubjects(Node s) {
-	  return this.subjects.contains(s);
+	  return this.mapSubjects.containsKey(s);
 	}
 	
 	public boolean isInPredicates(Node p) {
-	  return this.predicates.contains(p);
+	  return this.mapPredicates.containsKey(p);
 	}
 	
 	public boolean isInObjects(Node o) {
-	  return this.objects.contains(o);
+	  return this.mapObjects.containsKey(o);
 	}
 	
 	public boolean cache(OpBGP bgp, ResultSet results) {
 	  //System.out.println("Attempting to cache table with bgp " + bgp);
 	  System.out.println("Attempting to cache table...");
+	  
+	  cleanCache();
 	  
 	  Table table = new TableN();
 	  // TEST
@@ -147,22 +125,21 @@ public abstract class AbstractCache implements Cache {
 		table.addBinding(results.nextBinding());
 		//if (i++ == 10) break;
 		i++;
-		// First Cache criterion: No more than 100K rows
-		//i2 = maximum number of results
-		if (i > 100000) {
-			System.out.println("Table too large to put in cache!");
-			return false;
+		
+		if (i > 10000) {
+		  System.out.println("Table too large to put in cache!");
+		  return false;
 		}
 	  }
 	  
-	  if (table.size() == 0) {
-		System.out.println("Table is empty, not caching.");
-	  	return false;
+	  OpTable opt = OpTable.create(table);
+	  
+	  if (addToCache(bgp, opt)) {
+		System.out.println("Table cached succesfully!");
+	  } else {
+		System.out.println("Table already in cache!");
 	  }
 	  
-	  OpTable opt = OpTable.create(table);
-	  addToCache(bgp, opt);
-	  System.out.println("Table cached succesfully!");
 	  System.out.println("TABLE SIZE IS: " + i);
 	  
 	  cleanCache();
@@ -197,40 +174,37 @@ public abstract class AbstractCache implements Cache {
         Node o = t.getObject();
         
         if (!s.isVariable() && !s.isBlank()) {
-          subjects.add(s);
           if (mapSubjects.containsKey(s)) {
-            Set<Query> set = mapSubjects.get(s);
-            set.add(q);
+            Set<String> set = mapSubjects.get(s);
+            set.add(ExtractBgps.hash256(q.toString()));
             mapSubjects.put(s, set);
           } else {
-            Set<Query> set = new HashSet<Query>();
-            set.add(q);
+            Set<String> set = new HashSet<String>();
+            set.add(ExtractBgps.hash256(q.toString()));
             mapSubjects.put(s, set);
           }
         }
         
         if (!p.isVariable() && !p.isBlank()) {
-          predicates.add(p);
           if (mapPredicates.containsKey(p)) {
-            Set<Query> set = mapPredicates.get(p);
-            set.add(q);
+            Set<String> set = mapPredicates.get(p);
+            set.add(ExtractBgps.hash256(q.toString()));
             mapPredicates.put(p, set);
           } else {
-            Set<Query> set = new HashSet<Query>();
-            set.add(q);
+            Set<String> set = new HashSet<String>();
+            set.add(ExtractBgps.hash256(q.toString()));
             mapPredicates.put(p, set);
           }
         }
         
         if (!o.isVariable() && !o.isBlank()) {
-          objects.add(o);
           if (mapObjects.containsKey(o)) {
-            Set<Query> set = mapObjects.get(o);
-            set.add(q);
+            Set<String> set = mapObjects.get(o);
+            set.add(ExtractBgps.hash256(q.toString()));
             mapObjects.put(o, set);
           } else {
-            Set<Query> set = new HashSet<Query>();
-            set.add(q);
+            Set<String> set = new HashSet<String>();
+            set.add(ExtractBgps.hash256(q.toString()));
             mapObjects.put(o, set);
           }
         }
@@ -257,6 +231,10 @@ public abstract class AbstractCache implements Cache {
 		long beforeRet = System.nanoTime();
 		String br = "Time before absolute retrieving from cache: " + (beforeRet - startLine);
 		OpTable table = this.queryToSolution.get(ret);
+		
+		if (table.getTable().size() == 0) {
+		  return output;
+		}
 		
 		long afterRet = System.nanoTime();
 		String ar = "Time after absolute retrieving from cache: " + (afterRet - startLine);
@@ -316,21 +294,19 @@ public abstract class AbstractCache implements Cache {
 	
 	protected void removeConstants(Query qu) {
 		for (Node n : mapSubjects.keySet()) {
-		  Set<Query> s = mapSubjects.get(n);
-		  s.remove(qu);
+		  Set<String> s = mapSubjects.get(n);
+		  s.remove(ExtractBgps.hash256(qu.toString()));
 		  if (s.size() == 0) {
-		    subjects.remove(n);
 		    mapSubjects.remove(n);
 		  } else {
 		    mapSubjects.put(n, s);
 		  }
 		}
-		      
+		
 	    for (Node n : mapPredicates.keySet()) {
-		  Set<Query> s = mapPredicates.get(n);
-		  s.remove(qu);
+		  Set<String> s = mapPredicates.get(n);
+		  s.remove(ExtractBgps.hash256(qu.toString()));
 		  if (s.size() == 0) {
-		    predicates.remove(n);
 		    mapPredicates.remove(n);
 		  } else {
 		    mapPredicates.put(n, s);
@@ -338,10 +314,9 @@ public abstract class AbstractCache implements Cache {
 	    }
 		      
 		for (Node n : mapObjects.keySet()) {
-		  Set<Query> s = mapObjects.get(n);
-		  s.remove(qu);
+		  Set<String> s = mapObjects.get(n);
+		  s.remove(ExtractBgps.hash256(qu.toString()));
 		  if (s.size() == 0) {
-		    objects.remove(n);
 		    mapObjects.remove(n);
 		  } else {
 		    mapObjects.put(n, s);
@@ -369,6 +344,20 @@ public abstract class AbstractCache implements Cache {
 			output.add(key);
 		}
 		return output;
+	}
+	
+	public int getConstantAmount() {
+	  int total = 0;
+	  for (Node n : this.mapSubjects.keySet()) {
+	    total += this.mapSubjects.get(n).size();
+	  }
+	  for (Node n : this.mapPredicates.keySet()) {
+	    total += this.mapPredicates.get(n).size();
+	  }
+	  for (Node n : this.mapObjects.keySet()) {
+	    total += this.mapObjects.get(n).size();
+	  }
+	  return total;
 	}
 	
 	protected <K, V> K getKey(Map<K, V> map, V value) {

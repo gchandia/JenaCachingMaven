@@ -18,11 +18,13 @@ public class LFUCache extends AbstractCache {
   }
   
   @Override
-  protected void addToCache(OpBGP bgp, OpTable opt) {
+  protected boolean addToCache(OpBGP bgp, OpTable opt) {
 	if (this.queryToSolution.get(bgp) == null) {
 	  this.queryToSolution.put(bgp, opt);
 	  this.LFUHits.put(bgp, 1);
+	  return true;
 	}
+	return false;
   }
   
   @Override

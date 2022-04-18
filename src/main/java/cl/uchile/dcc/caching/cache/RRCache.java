@@ -25,12 +25,14 @@ public class RRCache extends AbstractCache {
   }
 
   @Override
-  protected void addToCache(OpBGP bgp, OpTable opt) {
+  protected boolean addToCache(OpBGP bgp, OpTable opt) {
 	if (this.queryToSolution.get(bgp) == null) {
 	  this.queryToSolution.put(bgp, opt);
+	  return true;
 	}
+	return false;
   }
-	
+  
   private OpBGP searchRandomKey() {
     Random r = new Random();
 	int removeIndex = r.nextInt(queryToSolution.size() + 1);

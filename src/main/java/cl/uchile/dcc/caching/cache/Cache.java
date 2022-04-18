@@ -28,4 +28,5 @@ public interface Cache {
 	public boolean isBgpInCache(OpBGP input);
 	//For testing purposes only
 	public LinkedHashMap<OpBGP, Integer> getLinkedMap();
+	public int getConstantAmount();
 }

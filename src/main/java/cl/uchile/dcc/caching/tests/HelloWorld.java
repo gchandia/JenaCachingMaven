@@ -30,10 +30,6 @@ public class HelloWorld {
 		blocks.add("4");
 		blocks.add("5");
 		
-		System.out.println(blocks);
-		
-		blocks.add("3");
-		
-		System.out.println(blocks);
+		System.out.println(blocks.indexOf("1"));
 	}
 }

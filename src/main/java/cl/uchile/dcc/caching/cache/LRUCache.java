@@ -20,11 +20,13 @@ public class LRUCache extends AbstractCache {
   }
   
   @Override
-  protected void addToCache(OpBGP bgp, OpTable opt) {
+  protected boolean addToCache(OpBGP bgp, OpTable opt) {
 	if (this.queryToSolution.get(bgp) == null) {
 	  this.queryToSolution.put(bgp, opt);
 	  this.LRUHits.put(bgp, this.LRUHit++);
+	  return true;
 	}
+	return false;
   }
   
   @Override

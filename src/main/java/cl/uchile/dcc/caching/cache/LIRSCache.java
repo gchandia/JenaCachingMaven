@@ -230,7 +230,7 @@ public class LIRSCache extends AbstractCache {
   }
   
   @Override
-  protected void addToCache(OpBGP bgp, OpTable opt) {
+  protected boolean addToCache(OpBGP bgp, OpTable opt) {
 	if (this.queryToSolution.get(bgp) == null) {
 	  this.queryToSolution.put(bgp, opt);
 	  LIRSStruct lirs = null;
@@ -241,15 +241,19 @@ public class LIRSCache extends AbstractCache {
 		e.getKey().setLIR(true);
 		Entry<LIRSStruct, OpBGP> bottom = this.stackS.structPopBottom();
 		this.listQ.put(bottom.getValue(), bottom.getKey());
+		blocks.add(lirs);
+		updateRecency();
+		return true;
 	  } else {
 		//We insert a fresh block in list Q with HIR status
 		lirs = new LIRSStruct(false);
 		this.listQ.put(bgp, lirs);
+		blocks.add(lirs);
+		updateRecency();
+		
 	  }
-	  
-	  blocks.add(lirs);
-	  updateRecency();
 	}
+	return false;
   }
   
   @Override

@@ -70,7 +70,7 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    myCache = new LFUCache(100, 1000000);
+    myCache = new LFUCache(10, 10000000);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
   }
@@ -450,7 +450,7 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\LFUCacheTest.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\Test.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
@@ -490,7 +490,7 @@ public class ExperimentPolicyFile {
     // i1 = 4, i2 = 10000   DONE
     // i1 = 4, i2 = 100000  DONE
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 100; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -530,6 +530,8 @@ public class ExperimentPolicyFile {
               }
               
               System.out.println("CACHE SIZE IS: " + myCache.cacheSize());
+              System.out.println("RESULTS SIZE IS: " + myCache.resultsSize());
+              System.out.println("AMOUNT OF CONSTANTS IS: " + myCache.getConstantAmount());
               
               Op inputOp = Algebra.compile(q);
               Transform cacheTransform = new CacheTransformCopy(myCache, startLine);
@@ -588,7 +590,7 @@ public class ExperimentPolicyFile {
     executor.shutdown();
     
     try {
-        future.get(1, TimeUnit.MINUTES);
+        future.get(15, TimeUnit.SECONDS);
     } catch (InterruptedException ie) {}
     catch (ExecutionException ee) {}
     catch (TimeoutException te) {}
