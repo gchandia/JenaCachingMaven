@@ -42,7 +42,7 @@ import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.tdb.TDBFactory;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
-import cl.uchile.dcc.caching.cache.LFUCache;
+import cl.uchile.dcc.caching.cache.LRUCache;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
@@ -51,10 +51,13 @@ import cl.uchile.dcc.qcan.main.SingleQuery;
 public class ExperimentPolicyFile {
   private static Cache myCache;
   private static ArrayList<Query> checkedSubQueries;
+  //Keeps last bgps in one query that have been checked by the function
   private static ArrayList<OpBGP> checkedBgpSubQueries;
   private static ArrayList<Query> mySubQueries;
+  //Keeps last bgps that have been checked
   private static ArrayList<OpBGP> myBgpSubQueries;
   private static ArrayList<Query> cachedSubQueries;
+  //Keeps last bgps that were attempted to be cached in one query
   private static ArrayList<OpBGP> cachedBgpSubQueries;
   private static String myModel = "D:\\tmp\\WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
@@ -70,7 +73,7 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    myCache = new LFUCache(10, 10000000);
+    myCache = new LRUCache(1000, 10000000);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
   }
@@ -450,47 +453,11 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\tmp\\Test.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    //1500 queries
-    // i1 = 1, i2 = 100     DONE
-    // i1 = 1, i2 = 1000    DONE
-    // i1 = 1, i2 = 10000   DONE
-    // i1 = 1, i2 = 100000  DONE
-    // i1 = 2, i2 = 100     DONE
-    // i1 = 2, i2 = 1000    DONE
-    // i1 = 2, i2 = 10000   DONE
-    // i1 = 2, i2 = 100000  DONE
-    // i1 = 3, i2 = 100     DONE
-    // i1 = 3, i2 = 1000    DONE
-    // i1 = 3, i2 = 10000   DONE
-    // i1 = 3, i2 = 100000  DONE
-    // i1 = 4, i2 = 100     DONE
-    // i1 = 4, i2 = 1000    DONE
-    // i1 = 4, i2 = 10000   DONE
-    // i1 = 4, i2 = 100000  DONE
-    
-    //2500 queries
-    // i1 = 1, i2 = 100     DONE
-    // i1 = 1, i2 = 1000    DONE
-    // i1 = 1, i2 = 10000   DONE
-    // i1 = 1, i2 = 100000  DONE
-    // i1 = 2, i2 = 100     DONE
-    // i1 = 2, i2 = 1000    DONE
-    // i1 = 2, i2 = 10000   DONE
-    // i1 = 2, i2 = 100000  DONE
-    // i1 = 3, i2 = 100     DONE
-    // i1 = 3, i2 = 1000    DONE
-    // i1 = 3, i2 = 10000   DONE
-    // i1 = 3, i2 = 100000  DONE
-    // i1 = 4, i2 = 100     DONE
-    // i1 = 4, i2 = 1000    DONE
-    // i1 = 4, i2 = 10000   DONE
-    // i1 = 4, i2 = 100000  DONE
-    
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= 1000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -508,6 +475,10 @@ public class ExperimentPolicyFile {
               
               ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.compile(q));
               bgps = Joins.cleanBGPs(bgps);
+              
+              //Separates bgps into chunks of size 1, hence containing all triple patterns
+              ArrayList<OpBGP> numberOfTPs = ExtractBgps.separateBGPs(bgps);
+              
               ArrayList<ArrayList<OpBGP>> list = new ArrayList<ArrayList<OpBGP>>();
               
               for (int k = 0; k < bgps.size(); k++) {
@@ -516,15 +487,31 @@ public class ExperimentPolicyFile {
                   list.add(opb);
               }
               
+              long bpfTime = System.nanoTime();
+              String bpf = "Time before prefunctions: " + (bpfTime - startLine);
+              
+              String gsq = "";
+              String brd = "";
+              String ard = "";
+              String cbl = "";
+              
               // If there are 10 or less TPs in the query
-              if (list.size() <= 10) {
-                ArrayList<ArrayList<OpBGP>> subQueries = ep.getSubQueries(list);
+              if (numberOfTPs.size() <= 10) {
+            	ArrayList<ArrayList<OpBGP>> subQueries = ep.getSubQueries(list);
+            	long gsqTime = System.nanoTime();
+            	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
                 //Sort subqueries from biggest to smallest
                 Collections.sort(subQueries, ep.subQueryComparator);
                 //Remove empty subquery
                 subQueries.remove(subQueries.size() - 1);
+                long brdTime = System.nanoTime();
+                brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
                 subQueries = ep.removeDisconnectedBgps(subQueries);
+                long ardTime = System.nanoTime();
+                ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
                 ArrayList<OpBGP> bgpsq = ep.canonicaliseBgpList(subQueries);
+                long cblTime = System.nanoTime();
+                cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
                 System.out.println("Number of subqueries is: " + bgpsq.size());
                 ep.checkBgps(bgpsq);
               }
@@ -534,7 +521,7 @@ public class ExperimentPolicyFile {
               System.out.println("AMOUNT OF CONSTANTS IS: " + myCache.getConstantAmount());
               
               Op inputOp = Algebra.compile(q);
-              Transform cacheTransform = new CacheTransformCopy(myCache, startLine);
+              Transform cacheTransform = new CacheTransformCopy(myCache, startLine, numberOfTPs);
               Op cachedOp = Transformer.transform(cacheTransform, inputOp);
               
               String solution = ((CacheTransformCopy) cacheTransform).getSolution();
@@ -568,6 +555,11 @@ public class ExperimentPolicyFile {
                 w.println("Info for query number " + (queryNumber - 1));
                 w.println(q);
                 w.println(ap);
+                w.println(bpf);
+                w.println(gsq);
+                w.println(brd);
+                w.println(ard);
+                w.println(cbl);
                 w.println(solution);
                 w.println(bo);
                 w.println(br);
@@ -575,7 +567,7 @@ public class ExperimentPolicyFile {
                 w.println("Cache size is: " + myCache.cacheSize());
                 w.println("Results size is: " + myCache.resultsSize());
                 w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
-                w.println(myCache.getLinkedMap());
+                //w.println(myCache.getLinkedMap());
                 w.println("");
               }
             } catch (Exception e) {}//w.println("Info for query number " + (queryNumber - 1)); 

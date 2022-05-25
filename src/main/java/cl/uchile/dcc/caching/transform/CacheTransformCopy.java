@@ -20,16 +20,23 @@ public class CacheTransformCopy extends TransformCopy {
 	private Cache myCache;
 	private long startLine = 0;
 	private String solution = "";
-	
+	//List of triple patterns passed by ExperimentPolicyFile
+	private ArrayList<OpBGP> listOfTPs = new ArrayList<OpBGP>();
 	private ArrayList<OpBGP> nonFilteredBgps = new ArrayList<OpBGP>();
 	
 	public CacheTransformCopy(Cache cache) {
-		this.myCache = cache;
+	  this.myCache = cache;
 	}
 	
 	public CacheTransformCopy(Cache cache, long startLine) {
-		this.myCache = cache;
-		this.startLine = startLine;
+	  this.myCache = cache;
+	  this.startLine = startLine;
+	}
+	
+	public CacheTransformCopy(Cache cache, long startLine, ArrayList<OpBGP> listOfTPs) {
+	  this.myCache = cache;
+	  this.startLine = startLine;
+	  this.listOfTPs = listOfTPs;
 	}
 	
 	public String getSolution() {
@@ -87,18 +94,20 @@ public class CacheTransformCopy extends TransformCopy {
 		//myCache.printConstants();
 		
 		// Get query bgps
-		ArrayList<OpBGP> bgps = ExtractBgps.getSplitBgps(bgp);
-		bgps = ExtractBgps.separateBGPs(bgps);
+		//ArrayList<OpBGP> bgps = ExtractBgps.getBgps(bgp);
+		//bgps = ExtractBgps.separateBGPs(bgps);
 		
 		//Refresh non filtered bgps
 		nonFilteredBgps = new ArrayList<OpBGP>();
 		
 		// Filter bgps that have constants in the cache
-		bgps = filterBgps(bgps);
+		ArrayList<OpBGP> bgps = filterBgps(this.listOfTPs);
 		//System.out.println("Filtered bgps are: " + bgps);
 		
 		// Get all query subbgps of size two and more
 		ArrayList<ArrayList<OpBGP>> subBgps = Joins.getSubBGPs(bgps);
+		long gs = System.nanoTime();
+		String getSubBgps = "Time to get sub bgps: " + (gs - startLine);
 		
 		// We're sorting all subbgps from biggest to smallest here
 		ArrayList<ArrayList<OpBGP>> sortedSubBgps = new ArrayList<ArrayList<OpBGP>>();
@@ -117,6 +126,9 @@ public class CacheTransformCopy extends TransformCopy {
 			sl.add(sizeOneBgps.get(i));
 			sortedSubBgps.add(sl);
 		}
+		
+		long ac = System.nanoTime();
+		String afterCycles = "Time for both list cycles: " + (ac - startLine);
 		
 		// We add each Op instance in bgps to the array we'll work on with the cache
 		ArrayList<Op> cachedBgps = new ArrayList<Op>();
@@ -178,7 +190,7 @@ public class CacheTransformCopy extends TransformCopy {
 		
 		Op opjoin = Algebra.optimize(join);
 		
-		formSolution(bc + '\n' + sCanon + '\n' + ec + '\n' + br + '\n' + sol + '\n' + ar);
+		formSolution(getSubBgps + '\n' + afterCycles + '\n' + bc + '\n' + sCanon + '\n' + ec + '\n' + br + '\n' + sol + '\n' + ar);
 		
 		return opjoin;
 	}

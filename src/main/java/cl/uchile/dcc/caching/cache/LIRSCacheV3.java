@@ -74,7 +74,7 @@ public class LIRSCacheV3 extends AbstractCache {
   }
   
   private void cycle() {
-	if (listQ.size() == queueLimit) {
+	if (listQ.size() >= queueLimit) {
       removeFromCache();
 	}
 	Entry<OpBGP, Block> y = this.stackS.entrySet().iterator().next();
@@ -93,7 +93,7 @@ public class LIRSCacheV3 extends AbstractCache {
 	  } else if (this.stackS.get(bgp) == null) {  //Case 1.2 k doesn't belong to the stack
 		  //If S is full new block enters as HIR
 		  this.stackS.put(bgp, new Block(false));
-		  if (listQ.size() == queueLimit) {
+		  if (listQ.size() >= queueLimit) {
 			removeFromCache();
 		  }
 		  this.listQ.put(bgp, this.stackS.get(bgp));

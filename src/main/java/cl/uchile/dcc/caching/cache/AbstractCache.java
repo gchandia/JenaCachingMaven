@@ -238,7 +238,7 @@ public abstract class AbstractCache implements Cache {
 		
 		long afterRet = System.nanoTime();
 		String ar = "Time after absolute retrieving from cache: " + (afterRet - startLine);
-			
+	    
 		Table t = table.getTable();
 		ArrayList<Var> newVars = new ArrayList<Var>();
 		ArrayList<Binding> newBindings = new ArrayList<Binding>();
