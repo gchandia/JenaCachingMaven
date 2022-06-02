@@ -103,6 +103,8 @@ public class CacheTransformCopy extends TransformCopy {
 		// Filter bgps that have constants in the cache
 		ArrayList<OpBGP> bgps = filterBgps(this.listOfTPs);
 		//System.out.println("Filtered bgps are: " + bgps);
+		long fb = System.nanoTime();
+		String filterBgps = "Time to filter bgps: " + (fb - startLine);
 		
 		// Get all query subbgps of size two and more
 		ArrayList<ArrayList<OpBGP>> subBgps = Joins.getSubBGPs(bgps);
@@ -190,7 +192,8 @@ public class CacheTransformCopy extends TransformCopy {
 		
 		Op opjoin = Algebra.optimize(join);
 		
-		formSolution(getSubBgps + '\n' + afterCycles + '\n' + bc + '\n' + sCanon + '\n' + ec + '\n' + br + '\n' + sol + '\n' + ar);
+		formSolution(filterBgps + '\n' + getSubBgps + '\n' + afterCycles + '\n' + bc + '\n' + sCanon + '\n' + 
+					 ec + '\n' + br + '\n' + sol + '\n' + ar);
 		
 		return opjoin;
 	}

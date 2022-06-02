@@ -111,24 +111,40 @@ public class ExperimentPolicyFile {
     return output;
   }
   
-  Comparator<ArrayList<OpBGP>> subQueryComparator = new Comparator<ArrayList<OpBGP>>()
+  ArrayList<OpBGP> getSubQueriesV2(ArrayList<OpBGP> input) {
+	int n = input.size();
+	ArrayList<OpBGP> output = new ArrayList<OpBGP>();
+	for (int x = 0; x < n; x++) {
+	  int y = input.get(x).getPattern().size();
+	  for (int i = 1; i < (1 << y); i++) {
+	    BasicPattern bp = new BasicPattern();
+		for (int j = 0; j < y; j++) {
+		  if ((i & (1 << j)) > 0) bp.add(input.get(x).getPattern().get(j));
+		}
+		output.add(new OpBGP(bp));
+      }
+	}
+	return output;
+  }
+  
+  Comparator<OpBGP> subQueryComparator = new Comparator<OpBGP>()
   {
-      public int compare(ArrayList<OpBGP> o1, ArrayList<OpBGP> o2)
+      public int compare(OpBGP o1, OpBGP o2)
       {
-          return Integer.compare(o2.size(), o1.size());
+          return Integer.compare(o2.getPattern().size(), o1.getPattern().size());
       }
   };
   
-  private static boolean isConnectedBgp(ArrayList<OpBGP> input) {
+  private static boolean isConnectedBgp(OpBGP input) {
     // For each bgp, check if it shares a var with any other bgp
     boolean flag = true;
-    if (input.size() == 1) return true;
+    if (input.getPattern().size() == 1) return true;
     
-    for (OpBGP checkBgp : input) {
+    for (Triple checkBgp : input.getPattern()) {
       boolean subflag = false;
-      for (OpBGP checkedBgp : input) {
+      for (Triple checkedBgp : input.getPattern()) {
         if (checkBgp == checkedBgp) continue;
-        if (Joins.shareVar(checkBgp.getPattern().get(0), checkedBgp.getPattern().get(0))) {
+        if (Joins.shareVar(checkBgp, checkedBgp)) {
           subflag = true;
         }
       }
@@ -137,26 +153,23 @@ public class ExperimentPolicyFile {
         break;
       }
     }
-    
     return flag;
   }
   
-  ArrayList<ArrayList<OpBGP>> removeDisconnectedBgps(ArrayList<ArrayList<OpBGP>> input) {
-    ArrayList<ArrayList<OpBGP>> output = new ArrayList<ArrayList<OpBGP>>();
-    
-    for (ArrayList<OpBGP> bgp : input) {
+  ArrayList<OpBGP> removeDisconnectedBgps(ArrayList<OpBGP> input) {
+    ArrayList<OpBGP> output = new ArrayList<OpBGP>();
+    for (OpBGP bgp : input) {
       if (isConnectedBgp(bgp)) {
         output.add(bgp);
       }
     }
-    
     return output;
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<ArrayList<OpBGP>> input) throws Exception {
+  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
     
-    for (ArrayList<OpBGP> bgps : input) {
+    for (OpBGP bgp : input) {
       Query q = new Query();
       SingleQuery sq;
       ElementGroup elg;
@@ -165,15 +178,12 @@ public class ExperimentPolicyFile {
       q.setQuerySelectType();
       q.setQueryResultStar(true);
       elg = new ElementGroup();
-      Iterator<OpBGP> it = bgps.iterator();
+      Iterator<Triple> it = bgp.getPattern().iterator();
+      
       while (it.hasNext()) {
-        OpBGP b = it.next();
-        Triple t = b.getPattern().get(0);
-        elg.addTriplePattern(t);
+    	elg.addTriplePattern(it.next());
       }
       q.setQueryPattern(elg);
-      
-      //System.out.println(q);
       
       sq = new SingleQuery(q.toString(), true, true, false, true);
       q = QueryFactory.create(sq.getQuery(), Syntax.syntaxARQ);
@@ -453,7 +463,7 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test2.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
@@ -474,18 +484,9 @@ public class ExperimentPolicyFile {
               //System.out.println(Algebra.compile(q));
               
               ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.compile(q));
-              bgps = Joins.cleanBGPs(bgps);
               
               //Separates bgps into chunks of size 1, hence containing all triple patterns
               ArrayList<OpBGP> numberOfTPs = ExtractBgps.separateBGPs(bgps);
-              
-              ArrayList<ArrayList<OpBGP>> list = new ArrayList<ArrayList<OpBGP>>();
-              
-              for (int k = 0; k < bgps.size(); k++) {
-                  ArrayList<OpBGP> opb = new ArrayList<OpBGP>();
-                  opb.add(bgps.get(k));
-                  list.add(opb);
-              }
               
               long bpfTime = System.nanoTime();
               String bpf = "Time before prefunctions: " + (bpfTime - startLine);
@@ -497,13 +498,11 @@ public class ExperimentPolicyFile {
               
               // If there are 10 or less TPs in the query
               if (numberOfTPs.size() <= 10) {
-            	ArrayList<ArrayList<OpBGP>> subQueries = ep.getSubQueries(list);
+            	ArrayList<OpBGP> subQueries = ep.getSubQueriesV2(bgps);
             	long gsqTime = System.nanoTime();
             	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
                 //Sort subqueries from biggest to smallest
                 Collections.sort(subQueries, ep.subQueryComparator);
-                //Remove empty subquery
-                subQueries.remove(subQueries.size() - 1);
                 long brdTime = System.nanoTime();
                 brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
                 subQueries = ep.removeDisconnectedBgps(subQueries);
