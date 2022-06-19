@@ -463,11 +463,11 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test2.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test3.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 10; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -495,6 +495,7 @@ public class ExperimentPolicyFile {
               String brd = "";
               String ard = "";
               String cbl = "";
+              String nbgps = "";
               
               // If there are 10 or less TPs in the query
               if (numberOfTPs.size() <= 10) {
@@ -508,6 +509,7 @@ public class ExperimentPolicyFile {
                 subQueries = ep.removeDisconnectedBgps(subQueries);
                 long ardTime = System.nanoTime();
                 ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
+                nbgps = "Number of bgps to canonicalise: " + subQueries.size();
                 ArrayList<OpBGP> bgpsq = ep.canonicaliseBgpList(subQueries);
                 long cblTime = System.nanoTime();
                 cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
@@ -558,6 +560,7 @@ public class ExperimentPolicyFile {
                 w.println(gsq);
                 w.println(brd);
                 w.println(ard);
+                w.println(nbgps);
                 w.println(cbl);
                 w.println(solution);
                 w.println(bo);
