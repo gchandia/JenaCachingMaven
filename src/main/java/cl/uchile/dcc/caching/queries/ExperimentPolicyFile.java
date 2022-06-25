@@ -127,6 +127,44 @@ public class ExperimentPolicyFile {
 	return output;
   }
   
+  ArrayList<OpBGP> getSubQueriesV3(ArrayList<OpBGP> input, OpBGP first) {
+	int n = input.size() - 1;
+	ArrayList<OpBGP> clone = input;
+	clone.remove(0);
+	ArrayList<OpBGP> output = new ArrayList<OpBGP>();
+	output.add(first);
+	for (int x = 0; x < n; x++) {
+	  int y = clone.get(x).getPattern().size();
+	  for (int i = 1; i < (1 << y); i++) {
+		BasicPattern bp = new BasicPattern();
+		for (int z = 0; z < first.getPattern().size(); z++) {
+		  bp.add(first.getPattern().get(z));
+		}
+		for (int j = 0; j < y; j++) {
+		  if ((i & (1 << j)) > 0) bp.add(input.get(x).getPattern().get(j));
+		}
+		output.add(new OpBGP(bp));
+	  }
+	}
+	return output;
+  }
+  
+  ArrayList<OpBGP> getSubQueriesV4(ArrayList<OpBGP> input) {
+	int n = input.size();
+	ArrayList<OpBGP> output = new ArrayList<OpBGP>();
+	for (int x = 0; x < n; x++) {
+	  int y = input.get(x).getPattern().size();
+	  for (int i = 0; i < y; i++) {
+		BasicPattern bp = new BasicPattern();
+		for (int j = 0; j <= i; j++) {
+		  bp.add(input.get(x).getPattern().get(j));
+		}
+		output.add(new OpBGP(bp));
+	  }
+	}
+	return output;
+  }
+  
   Comparator<OpBGP> subQueryComparator = new Comparator<OpBGP>()
   {
       public int compare(OpBGP o1, OpBGP o2)
@@ -463,11 +501,11 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test3.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\OptimizeTest.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -478,12 +516,14 @@ public class ExperimentPolicyFile {
               
               long startLine = System.nanoTime();
               Query q = parser.parseDbPedia(qu);
+              
               long afterParse = System.nanoTime();
               String ap = "Time to parse: " + (afterParse - startLine);
               //System.out.println(q);
               //System.out.println(Algebra.compile(q));
               
-              ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.compile(q));
+              //Get bgps from optimized query q
+              ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.optimize(Algebra.compile(q)));
               
               //Separates bgps into chunks of size 1, hence containing all triple patterns
               ArrayList<OpBGP> numberOfTPs = ExtractBgps.separateBGPs(bgps);
@@ -499,7 +539,8 @@ public class ExperimentPolicyFile {
               
               // If there are 10 or less TPs in the query
               if (numberOfTPs.size() <= 10) {
-            	ArrayList<OpBGP> subQueries = ep.getSubQueriesV2(bgps);
+            	//Only get subqueries with highest priority TP for each bgp
+            	ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
             	long gsqTime = System.nanoTime();
             	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
                 //Sort subqueries from biggest to smallest
@@ -572,9 +613,10 @@ public class ExperimentPolicyFile {
                 //w.println(myCache.getLinkedMap());
                 w.println("");
               }
-            } catch (Exception e) {}//w.println("Info for query number " + (queryNumber - 1)); 
-                                   //e.printStackTrace(w); 
+            } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
+                                   //e.printStackTrace(w);
                                    //w.println();}
+            }
         }
     };
     

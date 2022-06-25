@@ -40,10 +40,19 @@ public class QueryTest {
 				+ "      }\r\n"
 				+ "  }";
 		
+		String que = "SELECT *\r\n"
+	    		+ "WHERE {\r\n"
+	    		+ "   ?s db:nationality db:US .\r\n"
+	    		+ "   ?s db:name ?name .\r\n"
+	    		+ "   ?s db:worksAt db:UCLA .\r\n"
+	    		+ "   ?s db:type db:Professor .\r\n"
+	    		+ "}";
+		
 		Parser p = new Parser();
 		Query q = null;
 		try {
-			q = p.parseDbPedia(s);
+			q = p.parseDbPedia(que);
+			System.out.println(q);
 		} catch (Exception e) {}
 		ds.begin(ReadWrite.READ);
 		final Model model = ds.getDefaultModel();
