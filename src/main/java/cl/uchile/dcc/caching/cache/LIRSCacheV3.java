@@ -156,7 +156,10 @@ public class LIRSCacheV3 extends AbstractCache {
 	listQ.remove(LIRSKey);
 	//We change the status of the block X if found in the stack S
 	Block s = stackS.get(LIRSKey);
-	if (s != null) s.setResident(false);
+	if (s != null) {
+	  s.setResident(false);
+	  s.setLir(false);
+	}
 	//We then remove the constants from the cache
 	Query qu = formQuery(LIRSKey);
 	removeConstants(qu);

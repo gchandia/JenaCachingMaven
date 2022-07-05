@@ -56,9 +56,9 @@ public class LFUCache extends AbstractCache {
 	OpBGP LFUKey = searchLFUKey();
 	queryToSolution.remove(LFUKey);
 	this.LFUHits.remove(LFUKey);
-		
+	
 	Query qu = formQuery(LFUKey);
-	    
+	
 	removeConstants(qu);
   }
   

@@ -35,6 +35,7 @@ import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
@@ -42,7 +43,7 @@ import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.tdb.TDBFactory;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
-import cl.uchile.dcc.caching.cache.LRUCache;
+import cl.uchile.dcc.caching.cache.CustomCacheV5;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
@@ -73,7 +74,7 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    myCache = new LRUCache(1000, 10000000);
+    myCache = new CustomCacheV5(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
   }
@@ -202,6 +203,18 @@ public class ExperimentPolicyFile {
       }
     }
     return output;
+  }
+  
+  public static long getTimeApproach(Query q) {
+	Op alg = Algebra.compile(q);
+	alg = Algebra.optimize(alg);
+	QueryIterator qit = Algebra.exec(alg, model);
+	
+	long beforeOneResult = System.nanoTime();
+	qit.next();
+	long afterOneResult = System.nanoTime();
+	
+	return (afterOneResult - beforeOneResult);
   }
   
   ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
@@ -388,7 +401,11 @@ public class ExperimentPolicyFile {
     ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(q));
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
-    if (myCache.cache(qBgps.get(0), qResults)) myCache.cacheConstants(q);
+    if (myCache.cache(qBgps.get(0), qResults)) {
+      myCache.cacheConstants(q);
+      if (qResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
+      else myCache.cacheTimes(qBgps.get(0), 0);
+    }
     ds.end();
   }
   
@@ -501,11 +518,11 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\OptimizeTest.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\CustomV5Test.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 10000; i++) {
+    for (int i = 1; i <= 1000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -610,6 +627,8 @@ public class ExperimentPolicyFile {
                 w.println("Cache size is: " + myCache.cacheSize());
                 w.println("Results size is: " + myCache.resultsSize());
                 w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
+                w.println("Number of cache hits: " + myCache.getCacheHits());
+                w.println("Number of retrievals: " + myCache.getRetrievalHits());
                 //w.println(myCache.getLinkedMap());
                 w.println("");
               }

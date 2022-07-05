@@ -11,7 +11,7 @@ public class GetTimesArray {
       final BufferedReader tsv = 
           new BufferedReader (
                   new FileReader(
-                      new File("C:\\Thesis\\tmp\\DeleteCache_Limit_10_Queries_10000.txt")));
+                      new File("D:\\Thesis\\CustomV5Test.txt")));
       
       StringBuffer sb = new StringBuffer();
       sb.append("[");

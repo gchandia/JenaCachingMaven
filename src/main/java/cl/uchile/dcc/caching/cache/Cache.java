@@ -17,6 +17,9 @@ public interface Cache {
 	public boolean isInSubjects(Node s);
 	public boolean isInPredicates(Node p);
 	public boolean isInObjects(Node o);
+	public int getCacheHits();
+	public int getRetrievalHits();
+	public void cacheTimes(OpBGP bgp, long times);
 	public boolean cache(OpBGP bgp, 
 						 ResultSet results);
 	public void cacheConstants(Query q);

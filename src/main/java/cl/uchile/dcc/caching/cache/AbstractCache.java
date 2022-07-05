@@ -31,15 +31,21 @@ import cl.uchile.dcc.caching.bgps.ExtractBgps;
 
 public abstract class AbstractCache implements Cache {
 	protected HashMap<OpBGP, OpTable> queryToSolution;
+	protected HashMap<OpBGP, Integer> queryToTime;
 	private int itemLimit;
 	protected int resultsLimit;
 	protected Map<Node, Set<String>> mapSubjects;
     protected Map<Node, Set<String>> mapPredicates;
 	protected Map<Node, Set<String>> mapObjects;
 	private String solution;
+	//Temporary amount of results
+	protected int tempResults = 0;
+	private int cacheHits = 0;
+	private int retrievalHits = 0;
 	
 	public AbstractCache(int itemLimit, int resultsLimit) {
 		this.queryToSolution = new HashMap<OpBGP, OpTable>();
+		this.queryToTime = new HashMap<OpBGP, Integer>();
 		this.itemLimit = itemLimit;
 		this.resultsLimit = resultsLimit;
 		this.mapSubjects = new HashMap<Node, Set<String>>();
@@ -62,7 +68,16 @@ public abstract class AbstractCache implements Cache {
 	  return results;
 	}
 	
+	public int bgpResults(OpBGP bgp) {
+	  OpTable table = this.queryToSolution.get(bgp);
+	  return table.getTable().size();
+	}
+	
 	protected abstract boolean addToCache(OpBGP bgp, OpTable opt);
+	
+	public void cacheTimes(OpBGP bgp, long times) {
+	  this.queryToTime.put(bgp, Math.toIntExact(times));
+	}
 	
 	protected void cleanCache() {
 	  while (this.queryToSolution.size() > this.itemLimit) {
@@ -75,6 +90,14 @@ public abstract class AbstractCache implements Cache {
 	
 	public String getSolution() {
 		return this.solution;
+	}
+	
+	public int getCacheHits() {
+	  return this.cacheHits;
+	}
+	
+	public int getRetrievalHits() {
+	  return this.retrievalHits;
 	}
 	
 	protected void formSolution(String input) {
@@ -132,10 +155,13 @@ public abstract class AbstractCache implements Cache {
 		}
 	  }
 	  
+	  tempResults = i;
+	  
 	  OpTable opt = OpTable.create(table);
 	  
 	  if (addToCache(bgp, opt)) {
 		System.out.println("Table cached succesfully!");
+		this.cacheHits++;
 	  } else {
 		System.out.println("Table already in cache!");
 	  }
@@ -284,7 +310,8 @@ public abstract class AbstractCache implements Cache {
 		
 		long afterRep = System.nanoTime();
 		String are = "Time after replaceAll: " + (afterRep - startLine);
-	      
+	    
+		this.retrievalHits++;
 		formSolution(br + '\n' + ar + '\n' + bf + '\n' + af + '\n' + bs + '\n' + as + '\n' + bre + '\n' + are);
 	    
 		return output;
