@@ -39,5 +39,7 @@ public class HelloWorld {
 		
 		System.out.println(unsortedInts.get("Four"));
 		System.out.println(unsortedInts.get("Six"));
+		System.out.println(Long.valueOf(10).doubleValue());
+		System.out.println(2 * 1.0);
 	}
 }
