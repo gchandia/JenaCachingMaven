@@ -151,16 +151,15 @@ public class ExperimentPolicyFile {
   }
   
   ArrayList<OpBGP> getSubQueriesV4(ArrayList<OpBGP> input) {
-	int n = input.size();
+    int n = input.size();
 	ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	for (int x = 0; x < n; x++) {
 	  int y = input.get(x).getPattern().size();
+	  BasicPattern bp = new BasicPattern();
 	  for (int i = 0; i < y; i++) {
-		BasicPattern bp = new BasicPattern();
-		for (int j = 0; j <= i; j++) {
-		  bp.add(input.get(x).getPattern().get(j));
-		}
-		output.add(new OpBGP(bp));
+		bp.add(input.get(x).getPattern().get(i));
+		BasicPattern bpCopy = new BasicPattern(bp);
+		output.add(new OpBGP(bpCopy));
 	  }
 	}
 	return output;
@@ -458,12 +457,6 @@ public class ExperimentPolicyFile {
   
   static void checkBgpQueue(OpBGP bgp) {
 	cleanBgpSubQueries();
-	
-    if (myBgpSubQueries.isEmpty()) {
-      checkedBgpSubQueries.add(bgp);
-      myBgpSubQueries.add(bgp);
-      return;
-    }
     
     if (checkForBgpSubQuery(bgp)) {
       checkedBgpSubQueries.add(bgp);

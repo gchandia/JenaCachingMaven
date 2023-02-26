@@ -42,7 +42,38 @@ public class SubQueryTest {
 	}
 	return output;
   }
-
+  
+  static ArrayList<OpBGP> getSubQueriesV4V1(ArrayList<OpBGP> input) {
+		int n = input.size();
+		ArrayList<OpBGP> output = new ArrayList<OpBGP>();
+		for (int x = 0; x < n; x++) {
+		  int y = input.get(x).getPattern().size();
+		  for (int i = 0; i < y; i++) {
+			  BasicPattern bp = new BasicPattern();
+			  for (int j = 0; j < i; j++)
+				bp.add(input.get(x).getPattern().get(j));
+			  output.add(new OpBGP(bp));
+		  }
+		}
+		return output;
+	  }
+  
+  static ArrayList<OpBGP> getSubQueriesV4(ArrayList<OpBGP> input) {
+		int n = input.size();
+		ArrayList<OpBGP> output = new ArrayList<OpBGP>();
+		for (int x = 0; x < n; x++) {
+		  int y = input.get(x).getPattern().size();
+		  BasicPattern bp = new BasicPattern();
+		  for (int i = 0; i < y; i++) {
+			bp.add(input.get(x).getPattern().get(i));
+			BasicPattern bpCopy = new BasicPattern(bp);
+			output.add(new OpBGP(bpCopy));
+			System.out.println(output);
+		  }
+		}
+		return output;
+	  }
+  
   public static void main(String[] args) throws Exception {
 	String q = "SELECT ?a\r\n"
 			+ "WHERE {\r\n"
@@ -55,7 +86,7 @@ public class SubQueryTest {
 	Query qu = p.parseDbPedia(q);
 	ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.compile(qu));
 	System.out.println(bgps);
-	ArrayList<OpBGP> list = getSubQueriesV2(bgps);
+	ArrayList<OpBGP> list = getSubQueriesV4(bgps);
 	System.out.println(list);
   }
 }
