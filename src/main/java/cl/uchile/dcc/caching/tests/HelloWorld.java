@@ -1,8 +1,12 @@
 package cl.uchile.dcc.caching.tests;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HelloWorld {
 	private static HashMap<String, Integer> ints = new HashMap<String, Integer>();
@@ -41,5 +45,13 @@ public class HelloWorld {
 		System.out.println(unsortedInts.get("Six"));
 		System.out.println(Long.valueOf(10).doubleValue());
 		System.out.println(2 * 1.0);
+		System.out.println(unsortedInts);
+		List<Map.Entry<String, Integer>> entries = new ArrayList<Map.Entry<String, Integer>>(unsortedInts.entrySet());
+		Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+			  public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b){
+			    return a.getValue().compareTo(b.getValue());
+			  }
+			});
+		System.out.println(entries);
 	}
 }
