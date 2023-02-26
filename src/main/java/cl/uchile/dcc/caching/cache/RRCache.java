@@ -1,6 +1,6 @@
 package cl.uchile.dcc.caching.cache;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.jena.query.Dataset;
@@ -19,15 +19,18 @@ import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.common_joins.Parser;
 
 public class RRCache extends AbstractCache {
+  private ArrayList<OpBGP> keys;
 	
   public RRCache(int sizeLimit, int resultsLimit) {
 	super(sizeLimit, resultsLimit);
+	this.keys = new ArrayList<OpBGP>();
   }
-
+  
   @Override
   protected boolean addToCache(OpBGP bgp, OpTable opt) {
 	if (this.queryToSolution.get(bgp) == null) {
 	  this.queryToSolution.put(bgp, opt);
+	  this.keys.add(bgp);
 	  return true;
 	}
 	return false;
@@ -36,10 +39,7 @@ public class RRCache extends AbstractCache {
   private OpBGP searchRandomKey() {
     Random r = new Random();
 	int removeIndex = r.nextInt(queryToSolution.size() + 1);
-	OpBGP remove = queryToSolution.keySet().iterator().next();
-	Iterator<OpBGP> it = queryToSolution.keySet().iterator();
-	for (int i = 0; i < removeIndex; i++) { remove = it.next(); }
-	return remove;
+	return this.keys.remove(removeIndex);
   }
   
   @Override
