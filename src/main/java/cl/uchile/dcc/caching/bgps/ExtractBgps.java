@@ -18,6 +18,7 @@ import org.apache.jena.sparql.algebra.op.Op2;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.algebra.op.OpN;
 import org.apache.jena.sparql.algebra.op.OpPath;
+import org.apache.jena.sparql.algebra.op.OpSequence;
 import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.syntax.ElementGroup;
@@ -84,17 +85,38 @@ public class ExtractBgps {
 			                          path.getObject());
             bp.add(nt);
 			bgps.add(new OpBGP(bp));
-		} else if(op instanceof Op1) {
+		} else if (op instanceof Op1) {
 			getBgps(((Op1)op).getSubOp(),bgps);
-		} else if(op instanceof Op2) {
+		} else if (op instanceof Op2) {
 			getBgps(((Op2)op).getLeft(),bgps);
 			getBgps(((Op2)op).getRight(),bgps);
-		} else if(op instanceof OpN) {
+		} else if (op instanceof OpSequence) {
 			OpN opn = (OpN) op;
-			for(Op sop:opn.getElements()) {
+			BasicPattern bp = new BasicPattern();
+			for (Op sop:opn.getElements()) {
+				if (sop instanceof OpPath) {
+					TriplePath path = ((OpPath) sop).getTriplePath();
+					Triple t = Triple.create(path.getSubject(), NodeFactory.createURI(encodePath(path.getPath().toString())), path.getObject());
+					bp.add(t);
+				} else {
+				  getBgpsAux(bp, sop);
+				}
+			}
+			bgps.add(new OpBGP(bp));
+		} else if (op instanceof OpN) {
+			OpN opn = (OpN) op;
+			for (Op sop:opn.getElements()) {
 				getBgps(sop,bgps);
 			}
 		}
+	}
+	
+	public static void getBgpsAux(BasicPattern bp, Op op) {
+	  if (op instanceof OpBGP) {
+		OpBGP b = (OpBGP) op;
+		Triple t = Triple.create(b.getPattern().get(0).getSubject(), b.getPattern().get(0).getPredicate(), b.getPattern().get(0).getObject());
+		bp.add(t);
+	  }
 	}
 	
 	/**
@@ -216,13 +238,19 @@ public class ExtractBgps {
 	}
 	
 	public static void main(String[] args) {
-	  String s = "SELECT DISTINCT  ?var1 "
+	  /*String s = "SELECT DISTINCT  ?var1 "
 	          + "WHERE"
 	          + "{ BIND(<http://www.wikidata.org/entity/Q62155> AS ?var2)"
 	          + "?var2 (<http://www.wikidata.org/prop/direct/P279>)* ?var1"
-	          + "}";
-	  Query q = QueryFactory.create(s);
-	  Op op = Algebra.compile(q);
+	          + "}";*/
+	  String s2 = "PREFIX ex: <http://example.org/#>"
+			  + "SELECT DISTINCT *"
+			  + "WHERE"
+			  + "{ex:Chile ex:borders* ?c ."
+			  + "?c ex:name ?n ."
+			  + "}";
+	  Query q = QueryFactory.create(s2);
+	  /*Op op = Algebra.compile(q);
 	  Op op2 = ((Op1) op).getSubOp();
 	  Op op3 = ((Op1) op2).getSubOp();
 	  //Op op3L = ((Op2) op3).getLeft();
@@ -231,6 +259,8 @@ public class ExtractBgps {
 	  TriplePath path = ((OpPath)op3R).getTriplePath();
 	  System.out.println(path.getPath());
 	  System.out.println(encodePath(path.getPath().toString()));
-	  System.out.println(getBgps(op3R));
+	  System.out.println(getBgps(op3R));*/
+	  Op op = Algebra.compile(q);
+	  System.out.println(getBgps(op));
 	}
 }

@@ -66,7 +66,7 @@ public class ExperimentPolicyFile {
   private static int totalTps = 0;
   private static int queryNumber = 1;
   private static String qu = "";
-
+  
   public ExperimentPolicyFile() {
     checkedSubQueries = new ArrayList<Query>();
     checkedBgpSubQueries = new ArrayList<OpBGP>();
