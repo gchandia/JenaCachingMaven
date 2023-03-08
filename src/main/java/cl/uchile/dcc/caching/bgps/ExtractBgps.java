@@ -116,6 +116,11 @@ public class ExtractBgps {
 		OpBGP b = (OpBGP) op;
 		Triple t = Triple.create(b.getPattern().get(0).getSubject(), b.getPattern().get(0).getPredicate(), b.getPattern().get(0).getObject());
 		bp.add(t);
+	  } else if (op instanceof Op1) {
+		getBgpsAux(bp, ((Op1)op).getSubOp());
+	  } else if (op instanceof Op2) {
+		getBgpsAux(bp, ((Op2)op).getLeft());
+		getBgpsAux(bp, ((Op2)op).getRight());
 	  }
 	}
 	
