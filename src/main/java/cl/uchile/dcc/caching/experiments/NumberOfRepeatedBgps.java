@@ -21,6 +21,7 @@ import java.util.zip.GZIPInputStream;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.op.OpBGP;
@@ -28,6 +29,7 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.ElementGroup;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
+import cl.uchile.dcc.caching.cache.CustomCacheV5;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.qcan.main.SingleQuery;
@@ -39,6 +41,12 @@ public class NumberOfRepeatedBgps {
   private static int queryNumber = 1;
   private static int attemptedToCache = 0;
   private static String qu = "";
+  
+  public NumberOfRepeatedBgps() {
+	    checkedBgpSubQueries = new ArrayList<OpBGP>();
+	    myBgpSubQueries = new ArrayList<OpBGP>();
+	    cachedBgpSubQueries = new ArrayList<OpBGP>();
+	  }
   
   ArrayList<OpBGP> getSubQueries(ArrayList<OpBGP> input) {
 	int n = input.size();
@@ -190,7 +198,7 @@ public class NumberOfRepeatedBgps {
   }
   
   static void checkBgpQueue(OpBGP bgp) {
-	cleanBgpSubQueries();
+    cleanBgpSubQueries();
 	
 	if (checkForBgpSubQuery(bgp)) {
 	  checkedBgpSubQueries.add(bgp);
