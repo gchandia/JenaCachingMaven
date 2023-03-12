@@ -27,4 +27,11 @@
          </plugin>
       </plugins>
    </build>
+   <dependencies>
+  	<dependency>
+    	<groupId>com.monitorjbl</groupId>
+    	<artifactId>xlsx-streamer</artifactId>
+    	<version>2.1.0</version>
+  	</dependency>
+	</dependencies> 
 </project>
