@@ -1,27 +1,24 @@
 package cl.uchile.dcc.caching.experiments;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.zip.GZIPInputStream;
-
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.op.OpBGP;
@@ -29,7 +26,6 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.ElementGroup;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
-import cl.uchile.dcc.caching.cache.CustomCacheV5;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.qcan.main.SingleQuery;
@@ -212,7 +208,7 @@ public class NumberOfRepeatedBgps {
 	int howManyTimesSeen = countAppearances(bgp);
 	
 	// 0 for 1, 1 for two repeated, and so forth
-	if (howManyTimesSeen >= 0) {
+	if (howManyTimesSeen >= 4) {
 	  attemptedToCache++;
 	  checkedBgpSubQueries.add(bgp);
 	  cachedBgpSubQueries.add(bgp);
@@ -254,27 +250,22 @@ public class NumberOfRepeatedBgps {
   }
   
   public static void main(String[] args) throws Exception {
-	final BufferedReader tsv = 
-	        new BufferedReader (
-	                new InputStreamReader(
-	                        new GZIPInputStream(
-	                                new FileInputStream(
-	                                        new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
-		    
-	final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\RepeatedTriples.txt"));
+	InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
+	final Scanner sc = new Scanner(is);
+	
+	final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\RepeatedTriples5.txt"));
 	
 	final NumberOfRepeatedBgps rb = new NumberOfRepeatedBgps();
 	
-	for (int i = 1; i <= 10000; i++) {
+	// 2133607
+	while (sc.hasNextLine()) {
 	  final Runnable stuffToDo = new Thread() {
 	    @Override
 	    public void run() {
 	      try {
 	        System.out.println("READING QUERY " + queryNumber++);
-	        qu = tsv.readLine();
+	        qu = sc.nextLine();
 	        Parser parser = new Parser();
-	        
-	        long startLine = System.nanoTime();
 	        Query q = parser.parseDbPedia(qu);
 	        
 	        //System.out.println(q);
@@ -282,12 +273,6 @@ public class NumberOfRepeatedBgps {
 	        
 	        //Get bgps from optimized query q
 	        ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.optimize(Algebra.compile(q)));
-	        
-	        //Separates bgps into chunks of size 1, hence containing all triple patterns
-	        ArrayList<OpBGP> numberOfTPs = ExtractBgps.separateBGPs(bgps);
-	        
-	        long bpfTime = System.nanoTime();
-	        String bpf = "Time before prefunctions: " + (bpfTime - startLine);
 	        
 	        //Only get subqueries with highest priority TP for each bgp
 	        ArrayList<OpBGP> subQueries = rb.getSubQueries(bgps);
@@ -319,6 +304,7 @@ public class NumberOfRepeatedBgps {
 	    catch (ExecutionException ee) {}
 	    catch (TimeoutException te) {}
 	  }
-	  w.close();
+	sc.close();
+	w.close();
   }
 }
