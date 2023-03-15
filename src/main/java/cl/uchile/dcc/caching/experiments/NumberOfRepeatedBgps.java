@@ -208,7 +208,7 @@ public class NumberOfRepeatedBgps {
 	int howManyTimesSeen = countAppearances(bgp);
 	
 	// 0 for 1, 1 for two repeated, and so forth
-	if (howManyTimesSeen >= 4) {
+	if (howManyTimesSeen >= 7) {
 	  attemptedToCache++;
 	  checkedBgpSubQueries.add(bgp);
 	  cachedBgpSubQueries.add(bgp);
@@ -253,7 +253,7 @@ public class NumberOfRepeatedBgps {
 	InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
 	
-	final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\RepeatedTriples5.txt"));
+	final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\RepeatedTriples8plus.txt"));
 	
 	final NumberOfRepeatedBgps rb = new NumberOfRepeatedBgps();
 	

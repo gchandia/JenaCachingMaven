@@ -1,22 +1,21 @@
 package cl.uchile.dcc.caching.queries;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.zip.GZIPInputStream;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
@@ -64,6 +63,7 @@ public class ExperimentPolicyFile {
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
   private static int totalTps = 0;
+  private static int attemptedToCache = 0;
   private static int queryNumber = 1;
   private static String qu = "";
   
@@ -469,7 +469,8 @@ public class ExperimentPolicyFile {
     
     for (OpBGP b : myBgpSubQueries) {
       //System.out.println("b EQUALS " + b);
-      if (b.equals(bgp)){
+      if (b.equals(bgp)) {
+    	attemptedToCache++;
         cacheBgpQuery(bgp);
         checkedBgpSubQueries.add(bgp);
         cachedBgpSubQueries.add(bgp);
@@ -479,6 +480,7 @@ public class ExperimentPolicyFile {
     }
     
     checkedBgpSubQueries.add(bgp);
+    //Change bgp buffer size
     if (myBgpSubQueries.size() < 10000) {
       myBgpSubQueries.add(bgp);
     } else {
@@ -504,24 +506,27 @@ public class ExperimentPolicyFile {
   }
   
   public static void main(String[] args) throws Exception {
-    final BufferedReader tsv = 
+    /*final BufferedReader tsv = 
         new BufferedReader (
                 new InputStreamReader(
                         new GZIPInputStream(
                                 new FileInputStream(
-                                        new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));
+                                        new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));*/
     
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\CustomV5Test.txt"));
+    InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
+	final Scanner sc = new Scanner(is);
+    
+    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Buffer10K.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
             try {
               System.out.println("READING QUERY " + queryNumber++);
-              qu = tsv.readLine();
+              qu = sc.nextLine();
               Parser parser = new Parser();
               
               long startLine = System.nanoTime();
@@ -617,6 +622,7 @@ public class ExperimentPolicyFile {
                 w.println(bo);
                 w.println(br);
                 w.println(ar);
+                w.println("Number of bgps attempted to cache: " + attemptedToCache);
                 w.println("Cache size is: " + myCache.cacheSize());
                 w.println("Results size is: " + myCache.resultsSize());
                 w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
@@ -643,6 +649,7 @@ public class ExperimentPolicyFile {
     catch (ExecutionException ee) {}
     catch (TimeoutException te) {}
     }
+    sc.close();
     w.close();
   }
 }
