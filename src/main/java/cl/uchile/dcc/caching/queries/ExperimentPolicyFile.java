@@ -59,7 +59,7 @@ public class ExperimentPolicyFile {
   private static ArrayList<Query> cachedSubQueries;
   //Keeps last bgps that were attempted to be cached in one query
   private static ArrayList<OpBGP> cachedBgpSubQueries;
-  private static String myModel = "D:\\tmp\\WikiDB";
+  private static String myModel = "/home/gchandia/WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
   private static int totalTps = 0;
@@ -513,10 +513,10 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));*/
     
-    InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
+    InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
-    
-    final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Buffer10K.txt"));
+    	
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/buffer10K.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
