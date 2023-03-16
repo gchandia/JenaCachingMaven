@@ -401,7 +401,8 @@ public class ExperimentPolicyFile {
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
     if (myCache.cache(qBgps.get(0), qResults)) {
-      myCache.cacheConstants(q);
+      //TODO Remove this when we prove if necessary or not
+      //myCache.cacheConstants(q);
       if (qResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
       else myCache.cacheTimes(qBgps.get(0), 0);
     }
@@ -481,7 +482,7 @@ public class ExperimentPolicyFile {
     
     checkedBgpSubQueries.add(bgp);
     //Change bgp buffer size
-    if (myBgpSubQueries.size() < 100000) {
+    if (myBgpSubQueries.size() < 10000) {
       myBgpSubQueries.add(bgp);
     } else {
       myBgpSubQueries.remove(0);
@@ -516,7 +517,7 @@ public class ExperimentPolicyFile {
     InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
     	
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/buffer100K.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/noCacheConstants.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
