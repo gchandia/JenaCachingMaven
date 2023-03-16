@@ -11,7 +11,7 @@ public class GetTimesArray {
       final BufferedReader tsv = 
           new BufferedReader (
                   new FileReader(
-                      new File("D:\\Thesis\\noCacheConstants.txt")));
+                      new File("D:\\Thesis\\CustomCacheV6.txt")));
       
       StringBuffer sb = new StringBuffer();
       sb.append("[");

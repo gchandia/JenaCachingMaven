@@ -43,7 +43,6 @@ import org.apache.jena.tdb.TDBFactory;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
-import cl.uchile.dcc.caching.cache.CustomCacheV6;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
@@ -75,8 +74,8 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    //myCache = new CustomCacheV5(100, 1000000, 90, 10);
-    myCache = new CustomCacheV6(100, 1000000, 90, 10);
+    myCache = new CustomCacheV5(100, 1000000, 90, 10);
+    //myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
   }
@@ -403,8 +402,7 @@ public class ExperimentPolicyFile {
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
     if (myCache.cache(qBgps.get(0), qResults)) {
-      //TODO prove if counting results is better
-      long startLine = System.nanoTime();
+      /*long startLine = System.nanoTime();
     	
       while (qResults.hasNext()) {
         qResults.next();
@@ -412,9 +410,10 @@ public class ExperimentPolicyFile {
       
       long stop = System.nanoTime();
       long resultsTime = stop - startLine;
-      myCache.cacheTimes(bgp, resultsTime);
-      //if (qResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
-      //else myCache.cacheTimes(qBgps.get(0), 0);
+      myCache.cacheTimes(bgp, resultsTime);*/
+      
+      if (qResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
+      else myCache.cacheTimes(qBgps.get(0), 0);
     }
     ds.end();
   }
@@ -527,11 +526,11 @@ public class ExperimentPolicyFile {
     InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
     	
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomCacheV6.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/GetFirstSubQueries.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 10000; i++) {
+    for (int i = 1; i <= 1000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
