@@ -481,7 +481,7 @@ public class ExperimentPolicyFile {
     
     checkedBgpSubQueries.add(bgp);
     //Change bgp buffer size
-    if (myBgpSubQueries.size() < 1000) {
+    if (myBgpSubQueries.size() < 100000) {
       myBgpSubQueries.add(bgp);
     } else {
       myBgpSubQueries.remove(0);
@@ -516,7 +516,7 @@ public class ExperimentPolicyFile {
     InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
     	
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/buffer1K.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/buffer100K.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
