@@ -567,8 +567,6 @@ public class ExperimentPolicyFile {
             	//Only get subqueries with highest priority TP for each bgp
             	//TODO remove this when unnecessary
             	ArrayList<OpBGP> subQueries = ep.getSubQueriesV2(bgps);
-            	System.out.println(q);
-            	System.out.println(subQueries);
               	//ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
             	long gsqTime = System.nanoTime();
             	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
