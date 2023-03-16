@@ -526,11 +526,11 @@ public class ExperimentPolicyFile {
     InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
     	
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/GetFirstSubQueries.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/GetAllSubQueries.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 5; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -565,7 +565,11 @@ public class ExperimentPolicyFile {
               // If there are 10 or less TPs in the query
               if (numberOfTPs.size() <= 10) {
             	//Only get subqueries with highest priority TP for each bgp
-            	ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
+            	//TODO remove this when unnecessary
+            	ArrayList<OpBGP> subQueries = ep.getSubQueriesV2(bgps);
+            	System.out.println(q);
+            	System.out.println(subQueries);
+              	//ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
             	long gsqTime = System.nanoTime();
             	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
                 //Sort subqueries from biggest to smallest
