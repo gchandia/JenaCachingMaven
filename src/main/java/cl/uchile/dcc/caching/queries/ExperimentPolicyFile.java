@@ -60,13 +60,14 @@ public class ExperimentPolicyFile {
   //Keeps last bgps that were attempted to be cached in one query
   private static ArrayList<OpBGP> cachedBgpSubQueries;
   private static String myModel = "/home/gchandia/WikiDB";
+  //private static String myModel = "D:\\tmp\\WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
   private static int totalTps = 0;
   private static int attemptedToCache = 0;
   private static int queryNumber = 1;
   private static String qu = "";
-  private static PrintWriter results;
+  //private static PrintWriter results;
   
   public ExperimentPolicyFile() throws Exception {
     checkedSubQueries = new ArrayList<Query>();
@@ -79,7 +80,8 @@ public class ExperimentPolicyFile {
     //myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
-    results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AverageResults.txt"));
+    //results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AverageResults.txt"));
+    //results = new PrintWriter(new FileWriter("D:\\Thesis\\AverageResults.txt"));
   }
   
   static int countTriplePatterns(Query q) {
@@ -372,7 +374,7 @@ public class ExperimentPolicyFile {
   }
   
   static void cacheBgpQuery(OpBGP bgp) {
-    ds.begin(ReadWrite.READ);
+	ds.begin(ReadWrite.READ);
     ArrayList<OpBGP> bgps = new ArrayList<OpBGP>();
     for (Triple t : bgp.getPattern()) {
       BasicPattern bp = new BasicPattern();
@@ -404,18 +406,19 @@ public class ExperimentPolicyFile {
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
     if (myCache.cache(qBgps.get(0), qResults)) {
-      long startLine = System.nanoTime();
+      /*long startLine = System.nanoTime();
       int numberOfResults = 0;
+      System.out.println(qResults.hasNext());
       while (qResults.hasNext()) {
         qResults.next();
         numberOfResults++;
       }
-      
-      long stop = System.nanoTime();
-      long resultsTime = stop - startLine;
-      results.println("Average time: " + (resultsTime / numberOfResults));
-      results.println("First time: " + getTimeApproach(q));
-      
+      //long stop = System.nanoTime();
+      //long resultsTime = stop - startLine;
+      //results.println("Average time: " + resultsTime + " number of results: " + numberOfResults);
+      //results.println("HOLA");
+      //results.println("First time: " + getTimeApproach(q));
+      */
       if (qResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
       else myCache.cacheTimes(qBgps.get(0), 0);
     }
@@ -495,7 +498,7 @@ public class ExperimentPolicyFile {
     
     checkedBgpSubQueries.add(bgp);
     //Change bgp buffer size
-    if (myBgpSubQueries.size() < 10000) {
+    if (myBgpSubQueries.size() < 100000) {
       myBgpSubQueries.add(bgp);
     } else {
       myBgpSubQueries.remove(0);
@@ -528,13 +531,16 @@ public class ExperimentPolicyFile {
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));*/
     
     InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
+	//InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
+	
 	final Scanner sc = new Scanner(is);
-    	
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/Test.txt"));
+    
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KQueriesBuffer100K.txt"));
+	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 10000; i++) {
+    for (int i = 1; i <= 100000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -569,8 +575,6 @@ public class ExperimentPolicyFile {
               // If there are 10 or less TPs in the query
               if (numberOfTPs.size() <= 10) {
             	//Only get subqueries with highest priority TP for each bgp
-            	//TODO remove this when unnecessary
-            	//ArrayList<OpBGP> subQueries = ep.getSubQueriesV2(bgps);
               	ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
             	long gsqTime = System.nanoTime();
             	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
@@ -667,5 +671,6 @@ public class ExperimentPolicyFile {
     }
     sc.close();
     w.close();
+    //results.close();
   }
 }
