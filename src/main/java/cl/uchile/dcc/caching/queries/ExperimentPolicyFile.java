@@ -76,7 +76,7 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    myCache = new CustomCacheV5(100, 1000000, 90, 10);
+    myCache = new CustomCacheV5(1000, 10000000, 900, 10);
     //myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
@@ -498,7 +498,7 @@ public class ExperimentPolicyFile {
     
     checkedBgpSubQueries.add(bgp);
     //Change bgp buffer size
-    if (myBgpSubQueries.size() < 100000) {
+    if (myBgpSubQueries.size() < 10000) {
       myBgpSubQueries.add(bgp);
     } else {
       myBgpSubQueries.remove(0);
