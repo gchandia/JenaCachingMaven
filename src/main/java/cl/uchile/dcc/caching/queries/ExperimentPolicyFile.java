@@ -535,7 +535,7 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KQueriesBuffer100K.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KQueriesBuffer10K.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Test.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
