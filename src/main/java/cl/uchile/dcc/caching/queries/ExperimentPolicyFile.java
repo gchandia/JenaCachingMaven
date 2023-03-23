@@ -532,7 +532,7 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KQueriesBuffer10K.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
@@ -652,7 +652,7 @@ public class ExperimentPolicyFile {
                 w.println("Number of retrievals: " + myCache.getRetrievalHits());
                 //w.println(myCache.getLinkedMap());*/
             	w.println("Info for query number " + (queryNumber - 1));
-            	w.println(qu);
+            	w.println("Origin: " + qu.split("\t")[3]);
             	w.println(ar);
                 w.println("");
               }
