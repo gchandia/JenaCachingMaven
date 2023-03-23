@@ -607,13 +607,14 @@ public class ExperimentPolicyFile {
               long start = System.nanoTime();
               String br = "Time before reading results: " + (start - startLine);
               
-              ds.begin(ReadWrite.READ);
+              
               
               //System.out.println(opjoin);
               
               Query qFinal = OpAsQuery.asQuery(opjoin);
               
               */
+              ds.begin(ReadWrite.READ);
               QueryExecution qFinalExec = QueryExecutionFactory.create(q, model);
               //QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
               ResultSet rs = qFinalExec.execSelect();
