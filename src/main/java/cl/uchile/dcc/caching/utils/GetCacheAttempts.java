@@ -10,7 +10,7 @@ public class GetCacheAttempts {
 	      final BufferedReader tsv = 
 	          new BufferedReader (
 	                  new FileReader(
-	                      new File("D:\\Thesis\\GetFirstSubQueries.txt")));
+	                      new File("D:\\Thesis\\100KQueriesBuffer100K.txt")));
 	  
 	  StringBuffer sb = new StringBuffer();
 	  sb.append("[");
