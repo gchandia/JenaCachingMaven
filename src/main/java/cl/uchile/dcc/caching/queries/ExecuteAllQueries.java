@@ -30,20 +30,23 @@ import cl.uchile.dcc.caching.common_joins.Parser;
 
 public class ExecuteAllQueries {
 	static long queryNumber = 1;
+	private static String myModel = "D:\\tmp\\WikiDB";
+	private static Dataset ds = TDBFactory.createDataset(myModel);
 	
 	public static void main(String[] args) throws Exception {
-	  InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
+	  //InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
+	  InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	  final Scanner sc = new Scanner(is);
 	  // Read my TDB dataset
-	  String dbDir = "/home/gchandia/WikiDB";
-	  Dataset ds = TDBFactory.createDataset(dbDir);
+	  //String dbDir = "/home/gchandia/WikiDB";
 	  // Write if I wanna write, but I'll be using read to query over it mostly
 	  ds.begin(ReadWrite.READ);
 	  
 	  // Define model and Query
 	  final Model model = ds.getDefaultModel();
 	  
-	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal.txt"));
+	  //final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal.txt"));
+	  final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
 	  
 	  for (int i = 1; i <= 1000; i++) {
 		final Runnable stuffToDo = new Thread() {
@@ -56,6 +59,7 @@ public class ExecuteAllQueries {
 				Query q = parser.parseDbPedia(line);
 				
 				// Create query
+				ds.begin(ReadWrite.READ);
 				QueryExecution exec = QueryExecutionFactory.create(q, model);
 				long start = System.nanoTime();
 				ResultSet results = exec.execSelect();
@@ -65,6 +69,7 @@ public class ExecuteAllQueries {
 				}
 				
 				long stop = System.nanoTime();
+				
 				w.println("Info for query number " + (queryNumber - 1));
 				w.println(line);
 				w.println("Time after reading all results:" + (stop - start));

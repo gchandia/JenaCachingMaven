@@ -59,15 +59,14 @@ public class ExperimentPolicyFile {
   private static ArrayList<Query> cachedSubQueries;
   //Keeps last bgps that were attempted to be cached in one query
   private static ArrayList<OpBGP> cachedBgpSubQueries;
-  //private static String myModel = "/home/gchandia/WikiDB";
-  private static String myModel = "D:\\tmp\\WikiDB";
+  private static String myModel = "/home/gchandia/WikiDB";
+  //private static String myModel = "D:\\tmp\\WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
   private static int totalTps = 0;
   private static int attemptedToCache = 0;
   private static int queryNumber = 1;
   private static String qu = "";
-  //private static PrintWriter results;
   
   public ExperimentPolicyFile() throws Exception {
     checkedSubQueries = new ArrayList<Query>();
@@ -80,8 +79,6 @@ public class ExperimentPolicyFile {
     //myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
-    //results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AverageResults.txt"));
-    //results = new PrintWriter(new FileWriter("D:\\Thesis\\AverageResults.txt"));
   }
   
   static int countTriplePatterns(Query q) {
@@ -530,17 +527,17 @@ public class ExperimentPolicyFile {
                                 new FileInputStream(
                                         new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_organic.tsv.gz")))));*/
     
-    //InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
-	InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
+    InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
+	//InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	
 	final Scanner sc = new Scanner(is);
     
-    //final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KQueriesBuffer10K.txt"));
-	final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\CustomTest.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KQueriesBuffer10K.txt"));
+	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= 1000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -552,6 +549,7 @@ public class ExperimentPolicyFile {
               long startLine = System.nanoTime();
               Query q = parser.parseDbPedia(qu);
               
+              /*
               long afterParse = System.nanoTime();
               String ap = "Time to parse: " + (afterParse - startLine);
               //System.out.println(q);
@@ -614,7 +612,10 @@ public class ExperimentPolicyFile {
               //System.out.println(opjoin);
               
               Query qFinal = OpAsQuery.asQuery(opjoin);
-              QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
+              
+              */
+              QueryExecution qFinalExec = QueryExecutionFactory.create(q, model);
+              //QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
               ResultSet rs = qFinalExec.execSelect();
               
               int cacheResultAmount = 0;
@@ -628,7 +629,7 @@ public class ExperimentPolicyFile {
               String ar = "Time after reading all results: " + (stop - startLine);
               
               if (cacheResultAmount >= 0) {
-                System.out.println("FOUND ONE");
+                /*System.out.println("FOUND ONE");
                 w.println("Info for query number " + (queryNumber - 1));
                 w.println(q);
                 w.println(ap);
@@ -648,7 +649,10 @@ public class ExperimentPolicyFile {
                 w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
                 w.println("Number of cache hits: " + myCache.getCacheHits());
                 w.println("Number of retrievals: " + myCache.getRetrievalHits());
-                //w.println(myCache.getLinkedMap());
+                //w.println(myCache.getLinkedMap());*/
+            	w.println("Info for query number " + (queryNumber - 1));
+            	w.println(qu);
+            	w.println(ar);
                 w.println("");
               }
             } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
