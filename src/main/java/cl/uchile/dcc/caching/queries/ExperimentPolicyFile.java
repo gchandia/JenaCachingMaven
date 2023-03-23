@@ -537,7 +537,7 @@ public class ExperimentPolicyFile {
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 250000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
