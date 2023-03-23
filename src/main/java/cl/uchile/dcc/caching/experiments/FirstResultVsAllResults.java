@@ -63,8 +63,8 @@ public class FirstResultVsAllResults {
 	myCache = new CustomCacheV5(1000, 10000000, 900, 10);
 	ds.begin(ReadWrite.READ);
 	model = ds.getDefaultModel();
-	//results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AverageResults.txt"));
-	results = new PrintWriter(new FileWriter("D:\\Thesis\\AverageResults.txt"));
+	results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AverageResults.txt"));
+	//results = new PrintWriter(new FileWriter("D:\\Thesis\\AverageResults.txt"));
   }
   
   private static boolean areTriplesEquivalent(Triple a, Triple b) {
