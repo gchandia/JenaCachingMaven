@@ -655,6 +655,7 @@ public class ExperimentPolicyFile {
             	w.println("Origin: " + qu.split("\t")[3]);
             	w.println(ar);
                 w.println("");
+                w.flush();
               }
             } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
                                    //e.printStackTrace(w);
