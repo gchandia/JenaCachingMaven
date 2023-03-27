@@ -409,11 +409,7 @@ public class ExperimentPolicyFile {
     ResultSet backupResults = qExecTwo.execSelect();
     if (myCache.cache(qBgps.get(0), qResults)) {
       //long startLine = System.nanoTime();
-      int numberOfResults = 0;
-      while (backupResults.hasNext()) {
-        backupResults.next();
-        numberOfResults++;
-      }
+      
       /*
       //long stop = System.nanoTime();
       //long resultsTime = stop - startLine;
@@ -421,12 +417,7 @@ public class ExperimentPolicyFile {
       //results.println("HOLA");
       //results.println("First time: " + getTimeApproach(q));
       */
-      results.println("Table Size is: " + myCache.getTempResults());
-      results.println("Backup table number of results is: " + numberOfResults);
-      if (backupResults.hasNext()) {
-    	results.println("ENTERED IF");
-    	myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
-      }
+      if (backupResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
       else myCache.cacheTimes(qBgps.get(0), 0);
     }
     ds.end();
@@ -542,7 +533,7 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/Testing.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV510K.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Testing.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
