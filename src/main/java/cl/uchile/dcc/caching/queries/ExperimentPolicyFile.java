@@ -81,6 +81,7 @@ public class ExperimentPolicyFile {
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
     results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/TableResults.txt"));
+    //results = new PrintWriter(new FileWriter("D:\\Thesis\\TableResults.txt"));
   }
   
   static int countTriplePatterns(Query q) {
@@ -403,8 +404,9 @@ public class ExperimentPolicyFile {
     
     ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(q));
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
+    QueryExecution qExecTwo = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
-    ResultSet backupResults = qExec.execSelect();
+    ResultSet backupResults = qExecTwo.execSelect();
     if (myCache.cache(qBgps.get(0), qResults)) {
       //long startLine = System.nanoTime();
       int numberOfResults = 0;
@@ -540,12 +542,12 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV5Times1K.txt"));
-	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/Testing.txt"));
+	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Testing.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
