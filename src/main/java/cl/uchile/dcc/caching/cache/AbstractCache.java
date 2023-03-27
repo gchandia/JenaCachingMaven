@@ -173,6 +173,10 @@ public abstract class AbstractCache implements Cache {
 	  return true;
 	}
 	
+	public int getTempResults() {
+	  return this.tempResults;
+	}
+	
 	public void cacheConstants(Query q) {
 	  ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(q));
 	  Query qu = QueryFactory.make();

@@ -416,7 +416,11 @@ public class ExperimentPolicyFile {
       //results.println("HOLA");
       //results.println("First time: " + getTimeApproach(q));
       */
-      if (qResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
+      System.out.println("TEMP RESULTS ARE: " + myCache.getTempResults());
+      if (qResults.hasNext()) {
+    	System.out.println("ENTERED HERE");
+    	myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
+      }
       else myCache.cacheTimes(qBgps.get(0), 0);
     }
     ds.end();
@@ -532,12 +536,12 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV5Time.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 250000; i++) {
+    for (int i = 1; i <= 1000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -549,7 +553,7 @@ public class ExperimentPolicyFile {
               long startLine = System.nanoTime();
               Query q = parser.parseDbPedia(qu);
               
-              /*
+              
               long afterParse = System.nanoTime();
               String ap = "Time to parse: " + (afterParse - startLine);
               //System.out.println(q);
@@ -607,16 +611,13 @@ public class ExperimentPolicyFile {
               long start = System.nanoTime();
               String br = "Time before reading results: " + (start - startLine);
               
-              
-              
               //System.out.println(opjoin);
               
               Query qFinal = OpAsQuery.asQuery(opjoin);
               
-              */
               ds.begin(ReadWrite.READ);
-              QueryExecution qFinalExec = QueryExecutionFactory.create(q, model);
-              //QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
+              //QueryExecution qFinalExec = QueryExecutionFactory.create(q, model);
+              QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
               ResultSet rs = qFinalExec.execSelect();
               
               int cacheResultAmount = 0;
@@ -630,7 +631,7 @@ public class ExperimentPolicyFile {
               String ar = "Time after reading all results: " + (stop - startLine);
               
               if (cacheResultAmount >= 0) {
-                /*System.out.println("FOUND ONE");
+                System.out.println("FOUND ONE");
                 w.println("Info for query number " + (queryNumber - 1));
                 w.println(q);
                 w.println(ap);
@@ -647,13 +648,13 @@ public class ExperimentPolicyFile {
                 w.println("Number of bgps attempted to cache: " + attemptedToCache);
                 w.println("Cache size is: " + myCache.cacheSize());
                 w.println("Results size is: " + myCache.resultsSize());
-                w.println("Query " + (queryNumber - 1) + " Results with cache: " + cacheResultAmount);
+                w.println("Query " + (queryNumber - 1) + " results with cache: " + cacheResultAmount);
                 w.println("Number of cache hits: " + myCache.getCacheHits());
                 w.println("Number of retrievals: " + myCache.getRetrievalHits());
-                //w.println(myCache.getLinkedMap());*/
-            	w.println("Info for query number " + (queryNumber - 1));
+                //w.println(myCache.getLinkedMap());
+            	/*w.println("Info for query number " + (queryNumber - 1));
             	w.println("Origin: " + qu.split("\t")[3]);
-            	w.println(ar);
+            	w.println(ar);*/
                 w.println("");
                 w.flush();
               }

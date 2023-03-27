@@ -32,4 +32,5 @@ public interface Cache {
 	//For testing purposes only
 	public LinkedHashMap<OpBGP, Integer> getLinkedMap();
 	public int getConstantAmount();
+	public int getTempResults();
 }
