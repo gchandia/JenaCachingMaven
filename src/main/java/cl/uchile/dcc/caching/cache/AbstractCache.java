@@ -166,7 +166,7 @@ public abstract class AbstractCache implements Cache {
 		System.out.println("Table already in cache!");
 	  }
 	  
-	  System.out.println("TABLE SIZE IS: " + i);
+	  //System.out.println("TABLE SIZE IS: " + i);
 	  
 	  cleanCache();
       

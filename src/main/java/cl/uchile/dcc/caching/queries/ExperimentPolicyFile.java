@@ -67,6 +67,7 @@ public class ExperimentPolicyFile {
   private static int attemptedToCache = 0;
   private static int queryNumber = 1;
   private static String qu = "";
+  private static PrintWriter results;
   
   public ExperimentPolicyFile() throws Exception {
     checkedSubQueries = new ArrayList<Query>();
@@ -79,6 +80,7 @@ public class ExperimentPolicyFile {
     //myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
+    results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/TableResults.txt"));
   }
   
   static int countTriplePatterns(Query q) {
@@ -416,9 +418,9 @@ public class ExperimentPolicyFile {
       //results.println("HOLA");
       //results.println("First time: " + getTimeApproach(q));
       */
-      System.out.println("TEMP RESULTS ARE: " + myCache.getTempResults());
+      results.println("Table Size is: " + myCache.getTempResults());
       if (qResults.hasNext()) {
-    	System.out.println("ENTERED HERE");
+    	results.println("ENTERED IF");
     	myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
       }
       else myCache.cacheTimes(qBgps.get(0), 0);
@@ -541,7 +543,7 @@ public class ExperimentPolicyFile {
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -678,6 +680,6 @@ public class ExperimentPolicyFile {
     }
     sc.close();
     w.close();
-    //results.close();
+    results.close();
   }
 }
