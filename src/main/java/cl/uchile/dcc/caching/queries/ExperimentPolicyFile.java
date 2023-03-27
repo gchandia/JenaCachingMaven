@@ -404,14 +404,15 @@ public class ExperimentPolicyFile {
     ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(q));
     QueryExecution qExec = QueryExecutionFactory.create(q, model);
     ResultSet qResults = qExec.execSelect();
+    ResultSet backupResults = qExec.execSelect();
     if (myCache.cache(qBgps.get(0), qResults)) {
-      /*long startLine = System.nanoTime();
+      //long startLine = System.nanoTime();
       int numberOfResults = 0;
-      System.out.println(qResults.hasNext());
-      while (qResults.hasNext()) {
-        qResults.next();
+      while (backupResults.hasNext()) {
+        backupResults.next();
         numberOfResults++;
       }
+      /*
       //long stop = System.nanoTime();
       //long resultsTime = stop - startLine;
       //results.println("Average time: " + resultsTime + " number of results: " + numberOfResults);
@@ -419,7 +420,8 @@ public class ExperimentPolicyFile {
       //results.println("First time: " + getTimeApproach(q));
       */
       results.println("Table Size is: " + myCache.getTempResults());
-      if (qResults.hasNext()) {
+      results.println("Backup table number of results is: " + numberOfResults);
+      if (backupResults.hasNext()) {
     	results.println("ENTERED IF");
     	myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
       }
@@ -538,12 +540,12 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV5Time.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV5Times1K.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 10000; i++) {
+    for (int i = 1; i <= 1000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
