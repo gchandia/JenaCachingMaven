@@ -541,7 +541,7 @@ public class ExperimentPolicyFile {
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
     
-    for (int i = 1; i <= 1000; i++) {
+    for (int i = 1; i <= 100; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -595,9 +595,9 @@ public class ExperimentPolicyFile {
                 ep.checkBgps(bgpsq);
               }
               
-              System.out.println("CACHE SIZE IS: " + myCache.cacheSize());
-              System.out.println("RESULTS SIZE IS: " + myCache.resultsSize());
-              System.out.println("AMOUNT OF CONSTANTS IS: " + myCache.getConstantAmount());
+              //System.out.println("CACHE SIZE IS: " + myCache.cacheSize());
+              //System.out.println("RESULTS SIZE IS: " + myCache.resultsSize());
+              //System.out.println("AMOUNT OF CONSTANTS IS: " + myCache.getConstantAmount());
               
               Op inputOp = Algebra.compile(q);
               Transform cacheTransform = new CacheTransformCopy(myCache, startLine, numberOfTPs);
@@ -631,7 +631,7 @@ public class ExperimentPolicyFile {
               String ar = "Time after reading all results: " + (stop - startLine);
               
               if (cacheResultAmount >= 0) {
-                System.out.println("FOUND ONE");
+                //System.out.println("FOUND ONE");
                 w.println("Info for query number " + (queryNumber - 1));
                 w.println(q);
                 w.println(ap);
