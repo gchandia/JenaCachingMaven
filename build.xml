@@ -9,7 +9,7 @@
     <target name="create_run_jar">
         <jar destfile="${dir.jarfile}/caching-system.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="cl.uchile.dcc.caching.queries.ExperimentPolicyFile"/>
+                <attribute name="Main-Class" value="cl.uchile.dcc.caching.queries.ExecuteAllQueries"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="${dir.buildfile}/target/classes"/>

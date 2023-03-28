@@ -27,15 +27,15 @@ import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.caching.common_joins.Parser;
 
-
 public class ExecuteAllQueries {
 	static long queryNumber = 1;
-	private static String myModel = "D:\\tmp\\WikiDB";
+	//private static String myModel = "D:\\tmp\\WikiDB";
+	private static String myModel = "/home/gchandia/WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	
 	public static void main(String[] args) throws Exception {
-	  //InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
-	  InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
+	  InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
+	  //InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	  final Scanner sc = new Scanner(is);
 	  // Read my TDB dataset
 	  //String dbDir = "/home/gchandia/WikiDB";
@@ -45,10 +45,10 @@ public class ExecuteAllQueries {
 	  // Define model and Query
 	  final Model model = ds.getDefaultModel();
 	  
-	  //final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal.txt"));
-	  final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
+	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalV2.txt"));
+	  //final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
 	  
-	  for (int i = 1; i <= 1000; i++) {
+	  for (int i = 1; i <= 250000; i++) {
 		final Runnable stuffToDo = new Thread() {
 		@Override 
 		  public void run() { 
@@ -63,16 +63,20 @@ public class ExecuteAllQueries {
 				QueryExecution exec = QueryExecutionFactory.create(q, model);
 				long start = System.nanoTime();
 				ResultSet results = exec.execSelect();
+				int resultAmount = 0;
 				
 				while (results.hasNext()) {
 				  results.next();
+				  resultAmount++;
 				}
 				
 				long stop = System.nanoTime();
 				
 				w.println("Info for query number " + (queryNumber - 1));
 				w.println(line);
+				w.println("Number of results: " + resultAmount);
 				w.println("Time after reading all results:" + (stop - start));
+				w.flush();
 				
 			} catch (IllegalArgumentException e) {}
 			  catch (ResultSetException e) {}
@@ -88,7 +92,7 @@ public class ExecuteAllQueries {
 		executor.shutdown(); // This does not cancel the already-scheduled task.
 		
 		try { 
-		  future.get(1, TimeUnit.MINUTES); 
+		  future.get(15, TimeUnit.SECONDS); 
 		} catch (InterruptedException ie) {}
 		  catch (ExecutionException ee) {}
 		  catch (TimeoutException te) {}
