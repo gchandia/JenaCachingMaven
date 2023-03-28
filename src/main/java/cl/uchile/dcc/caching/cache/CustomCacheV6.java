@@ -152,9 +152,17 @@ public class CustomCacheV6 extends AbstractCache {
 	  double numOne = this.queryToTime.get(next) * 1.0;
 	  //double demOne = this.listQ.get(next).getResults() * 1.0;
 	  double demOne = this.bgpResults(next) * 1.0;
+	  
+	  //If it is 0 approach to 1
+	  if (demOne == 0.0) demOne = 1.0;
+	  
 	  double numTwo = this.queryToTime.get(LIRSKey) * 1.0;
 	  //double demTwo = this.listQ.get(LIRSKey).getResults() * 1.0;
 	  double demTwo = this.bgpResults(LIRSKey) * 1.0;
+	  
+	  //If it is 0 approach to 1
+	  if (demTwo == 0.0) demTwo = 1.0;
+	  
 	  if (numOne/demOne < numTwo/demTwo) LIRSKey = next;
 	}
 	queryToSolution.remove(LIRSKey);

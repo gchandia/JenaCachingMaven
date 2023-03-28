@@ -43,6 +43,7 @@ import org.apache.jena.tdb.TDBFactory;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
+import cl.uchile.dcc.caching.cache.CustomCacheV6;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
@@ -76,8 +77,8 @@ public class ExperimentPolicyFile {
     myBgpSubQueries = new ArrayList<OpBGP>();
     cachedSubQueries = new ArrayList<Query>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
-    myCache = new CustomCacheV5(1000, 10000000, 900, 10);
-    //myCache = new CustomCacheV6(100, 1000000, 90, 10);
+    //myCache = new CustomCacheV5(1000, 10000000, 900, 10);
+    myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
     results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/TableResults.txt"));
@@ -219,6 +220,18 @@ public class ExperimentPolicyFile {
 	long afterOneResult = System.nanoTime();
 	
 	return (afterOneResult - beforeOneResult);
+  }
+  
+  public static long getTimeApproachAll(Query q) {
+	Op alg = Algebra.compile(q);
+	alg = Algebra.optimize(alg);
+	QueryIterator qit = Algebra.exec(alg, model);
+	
+	long beforeAllResults = System.nanoTime();
+	while (qit.hasNext()) qit.next();
+	long afterAllResults = System.nanoTime();
+	
+	return (afterAllResults - beforeAllResults);
   }
   
   ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
@@ -417,7 +430,8 @@ public class ExperimentPolicyFile {
       //results.println("HOLA");
       //results.println("First time: " + getTimeApproach(q));
       */
-      if (backupResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
+      //if (backupResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproach(q));
+      if (backupResults.hasNext()) myCache.cacheTimes(qBgps.get(0), getTimeApproachAll(q));
       else myCache.cacheTimes(qBgps.get(0), 0);
     }
     ds.end();
@@ -533,7 +547,7 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV510K.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV610K.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Testing.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
