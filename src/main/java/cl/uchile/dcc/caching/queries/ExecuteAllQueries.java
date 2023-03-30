@@ -75,7 +75,7 @@ public class ExecuteAllQueries {
 				w.println("Info for query number " + (queryNumber - 1));
 				w.println(line);
 				w.println("Number of results: " + resultAmount);
-				w.println("Time after reading all results:" + (stop - start));
+				w.println("Time after reading all results: " + (stop - start));
 				w.flush();
 				
 			} catch (IllegalArgumentException e) {}
