@@ -45,14 +45,21 @@ public class ExecuteAllQueries {
 	  // Define model and Query
 	  final Model model = ds.getDefaultModel();
 	  
-	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalV2.txt"));
+	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalTest.txt"));
 	  //final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
+	  
+	  final PrintWriter er = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalErrors.txt"));
 	  
 	  for (int i = 1; i <= 250000; i++) {
 		final Runnable stuffToDo = new Thread() {
 		@Override 
 		  public void run() { 
 			try {
+				if (queryNumber <= 50000) {
+				  queryNumber++;
+				  sc.nextLine();
+				  return;
+				}
 				System.out.println("READING QUERY " + queryNumber++);
 				String line = sc.nextLine();
 				Parser parser = new Parser();
@@ -78,11 +85,11 @@ public class ExecuteAllQueries {
 				w.println("Time after reading all results: " + (stop - start));
 				w.flush();
 				
-			} catch (IllegalArgumentException e) {}
-			  catch (ResultSetException e) {}
-			  catch (QueryParseException e) {}
-			  catch (IOException e) {}
-			  catch (Exception e) {}
+			} catch (IllegalArgumentException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
+			  catch (ResultSetException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
+			  catch (QueryParseException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
+			  catch (IOException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
+			  catch (Exception e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
 			}
 		};
 		
@@ -100,5 +107,6 @@ public class ExecuteAllQueries {
 		
 		w.close();
 		sc.close();
+		er.close();
 	}
 }
