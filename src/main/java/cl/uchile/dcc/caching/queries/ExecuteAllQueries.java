@@ -55,11 +55,6 @@ public class ExecuteAllQueries {
 		@Override 
 		  public void run() { 
 			try {
-				if (queryNumber <= 50000) {
-				  queryNumber++;
-				  sc.nextLine();
-				  return;
-				}
 				System.out.println("READING QUERY " + queryNumber++);
 				String line = sc.nextLine();
 				Parser parser = new Parser();
