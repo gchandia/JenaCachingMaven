@@ -45,14 +45,14 @@ public class ExecuteAllQueries {
 	  // Define model and Query
 	  final Model model = ds.getDefaultModel();
 	  
-	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal_1.txt"));
+	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal_1_NoSERVICE.txt"));
 	  //final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
 	  
-	  final PrintWriter er = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalErrors_1.txt"));
+	  final PrintWriter er = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalErrors_1_NoSERVICE.txt"));
 	  
 	  for (int i = 1; i <= 50000; i++) {
 		final Runnable stuffToDo = new Thread() {
-		@Override 
+		@Override
 		  public void run() { 
 			try {
 				System.out.println("READING QUERY " + queryNumber++);
