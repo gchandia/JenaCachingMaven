@@ -49,7 +49,6 @@ public class Parser {
 		String spQuery = String.join(" ", query.split("\\+"));
 		spQuery = spQuery.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
 		spQuery = spQuery.replaceAll("\\+", "%2B");
-		System.out.println(spQuery);
 		if (spQuery.contains("SERVICE")) {
 		  spQuery = spQuery.replaceAll("SERVICE.*", "");
 		  spQuery += "}";
