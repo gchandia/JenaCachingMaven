@@ -34,7 +34,7 @@ public class ExecuteAllQueries {
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	
 	public static void main(String[] args) throws Exception {
-	  InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv"));
+	  InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs_3.tsv"));
 	  //InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	  final Scanner sc = new Scanner(is);
 	  // Read my TDB dataset
@@ -45,10 +45,10 @@ public class ExecuteAllQueries {
 	  // Define model and Query
 	  final Model model = ds.getDefaultModel();
 	  
-	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal_2_NoSERVICE.txt"));
+	  final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinal_3_NoSERVICE.txt"));
 	  //final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\NoCacheFinal.txt"));
 	  
-	  final PrintWriter er = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalErrors_2_NoSERVICE.txt"));
+	  final PrintWriter er = new PrintWriter(new FileWriter("/home/gchandia/Thesis/NoCacheFinalErrors_3_NoSERVICE.txt"));
 	  
 	  for (int i = 1; i <= 50000; i++) {
 		final Runnable stuffToDo = new Thread() {

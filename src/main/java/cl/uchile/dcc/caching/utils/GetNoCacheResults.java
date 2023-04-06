@@ -10,7 +10,7 @@ public class GetNoCacheResults {
 	  final BufferedReader tsv = 
 	    new BufferedReader (
 	      new FileReader(
-	        new File("D:\\Thesis\\NoCacheFinal_1_NoSERVICE.txt")));
+	        new File("D:\\Thesis\\NoCacheFinal_2_NoSERVICE.txt")));
 	  
 	  StringBuffer sb = new StringBuffer();
 	  sb.append("[");
