@@ -10,7 +10,7 @@ public class GetNoCacheResults {
 	  final BufferedReader tsv = 
 	    new BufferedReader (
 	      new FileReader(
-	        new File("D:\\Thesis\\NoCacheFinalV1.txt")));
+	        new File("D:\\Thesis\\NoCacheFinal_1_NoSERVICE.txt")));
 	  
 	  StringBuffer sb = new StringBuffer();
 	  sb.append("[");
@@ -21,14 +21,13 @@ public class GetNoCacheResults {
 	  while(line != null) {
 	    String[] subs = line.split(" ");
 	    if (subs[0].equals("Time") && subs[1].equals("after") && subs[2].equals("reading")) {
-	      sb.append(subs[4]);
+	      sb.append(subs[5]);
 	      sb.append(",");
 	    } else if (subs[0].equals("Info")) {
 	      numberOfQueries++;
 	    } else if (subs[0].equals("Number") && subs[3].equals("0")) {
 	      numberOfZeroes++;
 	    }
-	    System.out.println(line);
 	    line = tsv.readLine();
 	  }
 	  
