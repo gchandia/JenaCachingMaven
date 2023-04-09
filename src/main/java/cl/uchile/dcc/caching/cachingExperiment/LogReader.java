@@ -452,6 +452,6 @@ public class LogReader {
 	
 	w.close();
 	sc.close();
-	ds.close();
+	model.commit();
   }
 }
