@@ -32,8 +32,8 @@ public class Controller {
   public static void main(String[] args) {
 	Controller c = new Controller();
 	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1);
-	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001);
-	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_3.tsv", 100001);
-	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv", 150001);
+	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001);
+	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_3.tsv", 100001);
+	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv", 150001);
   }
 }

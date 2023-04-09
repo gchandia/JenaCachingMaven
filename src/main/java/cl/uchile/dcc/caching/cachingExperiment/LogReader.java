@@ -327,9 +327,9 @@ public class LogReader {
   public void readLog(File file) throws IOException {
 	InputStream is = new FileInputStream(file);
 	final Scanner sc = new Scanner(is);
-	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" + file.getName() + "_Results.txt"));
+	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" + file.getName().split("/")[3] + "_Results.txt"));
 	
-    for (int i = 1; i <= 50000; i++) {
+    for (int i = 1; i <= 10; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
