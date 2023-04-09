@@ -328,7 +328,7 @@ public class LogReader {
         public void run() {
           try {
             System.out.println("READING QUERY " + queryNumber++);
-            System.out.println("SIZE IS:" + cachedBgpSubQueries.size());
+            System.out.println("SIZE IS:" + myBgpSubQueries.size());
             qu = sc.nextLine();
             Parser parser = new Parser();
             
@@ -452,5 +452,6 @@ public class LogReader {
 	
 	w.close();
 	sc.close();
+	ds.close();
   }
 }
