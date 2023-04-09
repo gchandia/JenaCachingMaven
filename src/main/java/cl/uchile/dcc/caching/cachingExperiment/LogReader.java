@@ -70,6 +70,10 @@ public class LogReader {
 	this.queryNumber = queryNumber;
   }
   
+  public Cache getCache() {
+	return myCache;
+  }
+  
   public ArrayList<OpBGP> getMyBgpSubQueries() {
 	return myBgpSubQueries;
   }
@@ -325,7 +329,7 @@ public class LogReader {
 	final Scanner sc = new Scanner(is);
 	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" + file.getName() + "_Results.txt"));
 	
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= 50000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {

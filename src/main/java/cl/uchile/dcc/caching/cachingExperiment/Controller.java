@@ -25,6 +25,7 @@ public class Controller {
 	try {
 	  r.readLog(new File(input));
 	} catch (IOException e) {e.printStackTrace();}
+	myCache = r.getCache();
 	myBgpSubQueries = r.getMyBgpSubQueries();
   }
   
