@@ -57,18 +57,21 @@ public class LogReader {
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
   
-  public LogReader(Cache myMyCache, ArrayList<OpBGP> myCheckedBgpSubQueries, ArrayList<OpBGP> 
-  				   myMyBgpSubQueries, ArrayList<OpBGP> myCachedBgpSubQueries) {
+  public LogReader(Cache myMyCache, ArrayList<OpBGP> myMyBgpSubQueries) {
 	myCache = myMyCache;
-	checkedBgpSubQueries = myCheckedBgpSubQueries;
+	checkedBgpSubQueries = new ArrayList<OpBGP>();
 	myBgpSubQueries = myMyBgpSubQueries;
-	cachedBgpSubQueries = myCachedBgpSubQueries;
+	cachedBgpSubQueries = new ArrayList<OpBGP>();
 	ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
   }
   
   public void setQueryNumber(int queryNumber) {
 	this.queryNumber = queryNumber;
+  }
+  
+  public ArrayList<OpBGP> getMyBgpSubQueries() {
+	return myBgpSubQueries;
   }
   
   ArrayList<OpBGP> getSubQueriesV4(ArrayList<OpBGP> input) {
