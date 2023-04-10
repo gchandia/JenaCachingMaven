@@ -1,23 +1,20 @@
 package cl.uchile.dcc.caching.cachingExperiment;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
@@ -38,7 +35,6 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.tdb.TDBFactory;
-
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.common_joins.Joins;
@@ -46,28 +42,32 @@ import cl.uchile.dcc.caching.common_joins.Parser;
 import cl.uchile.dcc.caching.transform.CacheTransformCopy;
 import cl.uchile.dcc.qcan.main.SingleQuery;
 
-public class LogReader {
+public class LogReaderThreadPool {
   private static Cache myCache;
   private static ArrayList<OpBGP> checkedBgpSubQueries;
   private static ArrayList<OpBGP> myBgpSubQueries;
   private static ArrayList<OpBGP> cachedBgpSubQueries;
-  private int queryNumber;
-  private String qu = "";
+  private static int queryNumber;
+  private static String qu = "";
   private static String myModel = "/home/gchandia/WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
+  private static final int NUM_THREADS = 8;
+  private static final ExecutorService THREAD_POOL = Executors.newFixedThreadPool(NUM_THREADS);
+  private static ArrayList<Future<?>> futures;
   
-  public LogReader(Cache myMyCache, ArrayList<OpBGP> myMyBgpSubQueries) {
+  public LogReaderThreadPool(Cache myMyCache, ArrayList<OpBGP> myMyBgpSubQueries) {
 	myCache = myMyCache;
 	checkedBgpSubQueries = new ArrayList<OpBGP>();
 	myBgpSubQueries = myMyBgpSubQueries;
 	cachedBgpSubQueries = new ArrayList<OpBGP>();
 	ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
+    futures = new ArrayList<Future<?>>();
   }
   
-  public void setQueryNumber(int queryNumber) {
-	this.queryNumber = queryNumber;
+  public void setQueryNumber(int myQueryNumber) {
+	queryNumber = myQueryNumber;
   }
   
   public Cache getCache() {
@@ -78,7 +78,7 @@ public class LogReader {
 	return myBgpSubQueries;
   }
   
-  ArrayList<OpBGP> getSubQueriesV4(ArrayList<OpBGP> input) {
+  static ArrayList<OpBGP> getSubQueriesV4(ArrayList<OpBGP> input) {
 	int n = input.size();
 	ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	for (int x = 0; x < n; x++) {
@@ -93,7 +93,7 @@ public class LogReader {
 	return output;
   }
     
-  Comparator<OpBGP> subQueryComparator = new Comparator<OpBGP>()
+  static Comparator<OpBGP> subQueryComparator = new Comparator<OpBGP>()
   {
     public int compare(OpBGP o1, OpBGP o2)
     {
@@ -122,7 +122,7 @@ public class LogReader {
     return flag;
   }
   
-  ArrayList<OpBGP> removeDisconnectedBgps(ArrayList<OpBGP> input) {
+  static ArrayList<OpBGP> removeDisconnectedBgps(ArrayList<OpBGP> input) {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
     for (OpBGP bgp : input) {
       if (isConnectedBgp(bgp)) {
@@ -144,7 +144,7 @@ public class LogReader {
 	return (afterOneResult - beforeOneResult);
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  static ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	
     for (OpBGP bgp : input) {
@@ -166,8 +166,7 @@ public class LogReader {
       sq = new SingleQuery(q.toString(), true, true, false, true);
       q = QueryFactory.create(sq.getQuery(), Syntax.syntaxARQ);
       ArrayList<OpBGP> newbgp = ExtractBgps.getBgps(Algebra.compile(q));
-      output.addAll(newbgp);
-    }
+      output.addAll(newbgp);	    }
     
     return output;
   }
@@ -183,8 +182,7 @@ public class LogReader {
     
     boolean sAsB = (flagVarSA && flagVarSB) || a.getSubject().equals(b.getSubject());
     boolean pApB = (flagVarPA && flagVarPB) || a.getPredicate().equals(b.getPredicate());
-    boolean oAoB = (flagVarOA && flagVarOB) || a.getObject().equals(b.getObject());
-    
+    boolean oAoB = (flagVarOA && flagVarOB) || a.getObject().equals(b.getObject());	
     return (sAsB && pApB && oAoB);
   }
   
@@ -316,7 +314,7 @@ public class LogReader {
     }
   }
   
-  void checkBgps(ArrayList<OpBGP> bgps) {
+  static void checkBgps(ArrayList<OpBGP> bgps) {
 	checkedBgpSubQueries = new ArrayList<OpBGP>();
     cachedBgpSubQueries = new ArrayList<OpBGP>();
     for (OpBGP bgp : bgps) {
@@ -324,142 +322,135 @@ public class LogReader {
     }
   }
   
-  public void readLog(File file) throws IOException {
-	InputStream is = new FileInputStream(file);
-	final Scanner sc = new Scanner(is);
-	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
-														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
-														 + "_Results.txt"));
-	
-    for (int i = 1; i <= 50000; i++) {
-      final Runnable stuffToDo = new Thread() {
-        @Override
-        public void run() {
-          try {
-            System.out.println("READING QUERY " + queryNumber++);
-            qu = sc.nextLine();
-            Parser parser = new Parser();
-            
-            long startLine = System.nanoTime();
-            Query q = parser.parseDbPedia(qu);
-            
-            long afterParse = System.nanoTime();
-            String ap = "Time to parse: " + (afterParse - startLine);
-            
-            //Get bgps from optimized query q
-            ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.optimize(Algebra.compile(q)));
-              
-            //Separates bgps into chunks of size 1, hence containing all triple patterns
-            ArrayList<OpBGP> numberOfTPs = ExtractBgps.separateBGPs(bgps);
-              
-            long bpfTime = System.nanoTime();
-            String bpf = "Time before prefunctions: " + (bpfTime - startLine);
-              
-            String gsq = "";
-            String brd = "";
-            String ard = "";
-            String cbl = "";
-            String nbgps = "";
-            
-            // If there are 10 or less TPs in the query
-            if (numberOfTPs.size() <= 10) {
-              //Only get subqueries with highest priority TP for each bgp
-              ArrayList<OpBGP> subQueries = getSubQueriesV4(bgps);
-              long gsqTime = System.nanoTime();
-              gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
-              //Sort subqueries from biggest to smallest
-              Collections.sort(subQueries, subQueryComparator);
-              long brdTime = System.nanoTime();
-              brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
-              subQueries = removeDisconnectedBgps(subQueries);
-              long ardTime = System.nanoTime();
-              ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
-              nbgps = "Number of bgps to canonicalise: " + subQueries.size();
-              ArrayList<OpBGP> bgpsq = canonicaliseBgpList(subQueries);
-              long cblTime = System.nanoTime();
-              cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
-              //System.out.println("Number of subqueries is: " + bgpsq.size());
-              checkBgps(bgpsq);
-            }
-            
-            Op inputOp = Algebra.compile(q);
-            Transform cacheTransform = new CacheTransformCopy(myCache, startLine, numberOfTPs);
-            Op cachedOp = Transformer.transform(cacheTransform, inputOp);
-            
-            String solution = ((CacheTransformCopy) cacheTransform).getSolution();
-            long beforeOptimize = System.nanoTime();
-            String bo = "Time before optimizing: " + (beforeOptimize - startLine);
-            
-            Op opjoin = cachedOp;
-            long start = System.nanoTime();
-            String br = "Time before reading results: " + (start - startLine);
-            
-            Query qFinal = OpAsQuery.asQuery(opjoin);
-            
-            ds.begin(ReadWrite.READ);
-            //QueryExecution qFinalExec = QueryExecutionFactory.create(q, model);
-            QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
-            ResultSet rs = qFinalExec.execSelect();
-            
-            int cacheResultAmount = 0;
-            
-            while (rs.hasNext()) {
-              rs.next();
-              cacheResultAmount++;
-            }
-            
-            long stop = System.nanoTime();
-            String ar = "Time after reading all results: " + (stop - startLine);
-            
-            if (cacheResultAmount >= 0) {
-              //System.out.println("FOUND ONE");
-              w.println("Info for query number " + (queryNumber - 1));
-              w.println(q);
-              w.println(ap);
-              w.println(bpf);
-              w.println(gsq);
-              w.println(brd);
-              w.println(ard);
-              w.println(nbgps);
-              w.println(cbl);
-              w.println(solution);
-              w.println(bo);
-              w.println(br);
-              w.println(ar);
-              w.println("Origin: " + qu.split("\t")[3]);
-              w.println("Cache size is: " + myCache.cacheSize());
-              w.println("Results size is: " + myCache.resultsSize());
-              w.println("Query " + (queryNumber - 1) + " results with cache: " + cacheResultAmount);
-              w.println("Number of cache hits: " + myCache.getCacheHits());
-              w.println("Number of retrievals: " + myCache.getRetrievalHits());
-              //w.println(myCache.getLinkedMap());
-              /*w.println("Info for query number " + (queryNumber - 1));
-              w.println("Origin: " + qu.split("\t")[3]);
-              w.println(ar);*/
-              w.println("");
-              w.flush();
-            }
-          } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-                                   //e.printStackTrace(w);
-                                   //w.println();}
-        }
-      }
-    };
-    
-    final ExecutorService executor = Executors.newSingleThreadExecutor();
-    @SuppressWarnings("rawtypes")
-    final Future future = executor.submit(stuffToDo);
-    executor.shutdown();
-    
+  private static void processQuery(Query q, PrintWriter w) {
+	String output = "";
     try {
-        future.get(15, TimeUnit.SECONDS);
-    } catch (InterruptedException ie) {}
-      catch (ExecutionException ee) {}
-      catch (TimeoutException te) {}
+      System.out.println("READING QUERY " + queryNumber++);
+      
+      long startLine = System.nanoTime();
+      
+      long afterParse = System.nanoTime();
+      String ap = "Time to parse: " + (afterParse - startLine);
+      
+      //Get bgps from optimized query q
+      ArrayList<OpBGP> bgps = ExtractBgps.getBgps(Algebra.optimize(Algebra.compile(q)));
+      
+      //Separates bgps into chunks of size 1, hence containing all triple patterns
+      ArrayList<OpBGP> numberOfTPs = ExtractBgps.separateBGPs(bgps);
+      
+      long bpfTime = System.nanoTime();
+      String bpf = "Time before prefunctions: " + (bpfTime - startLine);
+      
+      String gsq = "";
+      String brd = "";
+      String ard = "";
+      String cbl = "";
+      String nbgps = "";
+      
+      // If there are 10 or less TPs in the query
+      if (numberOfTPs.size() <= 10) {
+        //Only get subqueries with highest priority TP for each bgp
+        ArrayList<OpBGP> subQueries = getSubQueriesV4(bgps);
+        long gsqTime = System.nanoTime();
+        gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
+        //Sort subqueries from biggest to smallest
+        Collections.sort(subQueries, subQueryComparator);
+        long brdTime = System.nanoTime();
+        brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
+        subQueries = removeDisconnectedBgps(subQueries);
+        long ardTime = System.nanoTime();
+        ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
+        nbgps = "Number of bgps to canonicalise: " + subQueries.size();
+        ArrayList<OpBGP> bgpsq = canonicaliseBgpList(subQueries);
+        long cblTime = System.nanoTime();
+        cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
+        //System.out.println("Number of subqueries is: " + bgpsq.size());
+        checkBgps(bgpsq);
+      }
+      
+      Op inputOp = Algebra.compile(q);
+      Transform cacheTransform = new CacheTransformCopy(myCache, startLine, numberOfTPs);
+      Op cachedOp = Transformer.transform(cacheTransform, inputOp);
+      
+      String solution = ((CacheTransformCopy) cacheTransform).getSolution();
+      long beforeOptimize = System.nanoTime();
+      String bo = "Time before optimizing: " + (beforeOptimize - startLine);
+      
+      Op opjoin = cachedOp;
+      long start = System.nanoTime();
+      String br = "Time before reading results: " + (start - startLine);
+      
+      Query qFinal = OpAsQuery.asQuery(opjoin);
+      
+      ds.begin(ReadWrite.READ);
+      //QueryExecution qFinalExec = QueryExecutionFactory.create(q, model);
+      QueryExecution qFinalExec = QueryExecutionFactory.create(qFinal, model);
+      ResultSet rs = qFinalExec.execSelect();
+      
+      int cacheResultAmount = 0;
+      
+      while (rs.hasNext()) {
+        rs.next();
+        cacheResultAmount++;
+      }
+      
+      long stop = System.nanoTime();
+      String ar = "Time after reading all results: " + (stop - startLine);
+      
+      if (cacheResultAmount >= 0) {
+        //System.out.println("FOUND ONE");
+    	output += "Info for query number " + (queryNumber - 1) + '\n';
+    	output += q.toString() + '\n';
+        output += ap + '\n';
+        output += bpf + '\n';
+        output += gsq + '\n';
+        output += brd + '\n';
+        output += ard + '\n';
+        output += nbgps + '\n';
+        output += cbl + '\n';
+        output += solution + '\n';
+        output += bo + '\n';
+        output += br + '\n';
+        output += ar + '\n';
+        output += "Origin: " + qu.split("\t")[3] + '\n';
+        output += "Cache size is: " + myCache.cacheSize() + '\n';
+        output += "Results size is: " + myCache.resultsSize() + '\n';
+        output += "Query " + (queryNumber - 1) + " results with cache: " + cacheResultAmount + '\n';
+        output += "Number of cache hits: " + myCache.getCacheHits() + '\n';
+        output += "Number of retrievals: " + myCache.getRetrievalHits() + '\n';
+        output += '\n';
+      }
+    } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
+                           //e.printStackTrace(w);
+                           //w.println();}
     }
-	
-	w.close();
-	sc.close();
+    w.println(output);
+    w.flush();
 	model.commit();
+  }
+  
+  public void readLog(File file) throws Exception {
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
+			 							  + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
+			 							  + "_Results.txt"));
+	Parser p = new Parser();
+	
+	try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+	  while ((qu = br.readLine()) != null) {
+		Query q = p.parseDbPedia(qu);
+		Future<?> future = THREAD_POOL.submit(() -> processQuery(q, w));
+        futures.add(future);
+	  }
+	} catch (IOException e) {e.printStackTrace();}
+	
+	for (Future<?> future : futures) {
+	  try {
+		future.get(15, TimeUnit.SECONDS);
+	  } catch (InterruptedException e) {
+	  } catch (ExecutionException e) {}
+	}
+	
+	THREAD_POOL.shutdown();
+	w.close();
   }
 }

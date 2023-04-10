@@ -20,11 +20,15 @@ public class Controller {
   }
   
   public void sendRequest(String input, int queryNumber) {
-	LogReader r = new LogReader(myCache, myBgpSubQueries);
+	LogReaderThreadPool r = new LogReaderThreadPool(myCache, myBgpSubQueries);
 	r.setQueryNumber(queryNumber);
 	try {
 	  r.readLog(new File(input));
-	} catch (IOException e) {e.printStackTrace();}
+	} catch (IOException e) {
+		e.printStackTrace();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
 	myCache = r.getCache();
 	myBgpSubQueries = r.getMyBgpSubQueries();
   }
