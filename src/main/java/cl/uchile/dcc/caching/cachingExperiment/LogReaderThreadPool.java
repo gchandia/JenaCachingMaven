@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.Query;
@@ -446,8 +448,7 @@ public class LogReaderThreadPool {
 	for (Future<?> future : futures) {
 	  try {
 		future.get(15, TimeUnit.SECONDS);
-	  } catch (InterruptedException e) {
-	  } catch (ExecutionException e) {}
+	  } catch (InterruptedException | ExecutionException | TimeoutException e) {future.cancel(true);}
 	}
 	
 	THREAD_POOL.shutdown();
