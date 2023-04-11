@@ -20,7 +20,6 @@ import org.apache.jena.query.ReadWrite;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.sparql.JenaTransactionException;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.OpAsQuery;
@@ -434,7 +433,7 @@ private static void processQuery(Query q, PrintWriter w) {
 		Query q = p.parseDbPedia(qu);
 		processQuery(q, w);
 	  }
-	} catch (JenaTransactionException e) { e.printStackTrace(); }
+	} catch (Exception e) { e.printStackTrace(); }
 	w.close();
   }
 }
