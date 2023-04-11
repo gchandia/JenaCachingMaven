@@ -20,7 +20,7 @@ public class Controller {
   }
   
   public void sendRequest(String input, int queryNumber) {
-	LogReaderThreadPool r = new LogReaderThreadPool(myCache, myBgpSubQueries);
+	LogReaderSequence r = new LogReaderSequence(myCache, myBgpSubQueries);
 	r.setQueryNumber(queryNumber);
 	try {
 	  r.readLog(new File(input));
