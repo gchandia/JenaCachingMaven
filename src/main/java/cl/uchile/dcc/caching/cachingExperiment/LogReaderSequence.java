@@ -413,10 +413,13 @@ private static void processQuery(Query q, PrintWriter w) {
         output += "Number of retrievals: " + myCache.getRetrievalHits() + '\n';
         output += '\n';
       }
-    } catch (Exception e) {e.printStackTrace();}
-    w.println(output);
-    w.flush();
-	model.commit();
+    } catch (Exception e) { 
+      e.printStackTrace();
+    } finally {
+      w.println(output);
+      w.flush();
+      model.commit();
+    }
   }
   
   public void readLog(File file) throws Exception {
