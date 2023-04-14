@@ -3,8 +3,10 @@ package cl.uchile.dcc.caching.queries;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,6 +42,8 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.tdb.TDBFactory;
+
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
@@ -69,7 +73,7 @@ public class ExperimentPolicyFile {
   private static String qu = "";
   private static PrintWriter results;
   
-  public ExperimentPolicyFile() throws Exception {
+  public ExperimentPolicyFile() throws IOException {
     checkedSubQueries = new ArrayList<Query>();
     checkedBgpSubQueries = new ArrayList<OpBGP>();
     mySubQueries = new ArrayList<Query>();
@@ -80,7 +84,7 @@ public class ExperimentPolicyFile {
     //myCache = new CustomCacheV6(100, 1000000, 90, 10);
     ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
-    results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/TableResults.txt"));
+    results = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AidanTableResults.txt"));
     //results = new PrintWriter(new FileWriter("D:\\Thesis\\TableResults.txt"));
   }
   
@@ -233,7 +237,7 @@ public class ExperimentPolicyFile {
 	return (afterAllResults - beforeAllResults);
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
     
     for (OpBGP bgp : input) {
@@ -533,7 +537,7 @@ public class ExperimentPolicyFile {
     }
   }
   
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws IOException {
     /*final BufferedReader tsv = 
         new BufferedReader (
                 new InputStreamReader(
@@ -546,7 +550,7 @@ public class ExperimentPolicyFile {
 	
 	final Scanner sc = new Scanner(is);
     
-    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/CustomV5Final.txt"));
+    final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/AidanCustomV5Final.txt"));
 	//final PrintWriter w = new PrintWriter(new FileWriter("D:\\Thesis\\Testing.txt"));
     
     final ExperimentPolicyFile ep = new ExperimentPolicyFile();
@@ -669,10 +673,22 @@ public class ExperimentPolicyFile {
                 w.println("");
                 w.flush();
               }
-            } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-                                   //e.printStackTrace(w);
-                                   //w.println();}
-            }
+            } catch (UnsupportedEncodingException e) {
+            	w.println("Info for query number " + (queryNumber - 1)); 
+                e.printStackTrace(w);
+                e.printStackTrace();
+                w.println();
+			} catch (InterruptedException e) {
+				w.println("Info for query number " + (queryNumber - 1)); 
+                e.printStackTrace(w);
+                e.printStackTrace();
+                w.println();
+			} catch (HashCollisionException e) {
+				w.println("Info for query number " + (queryNumber - 1)); 
+                e.printStackTrace(w);
+                e.printStackTrace();
+                w.println();
+			}
         }
     };
     

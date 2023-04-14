@@ -16,13 +16,14 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.qcan.main.SingleQuery;
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 
 public class FillCache {
 	private Cache myCache;
 	private String myModel = "D:\\tmp\\WikiDB";
 	
-	public FillCache() throws Exception {
+	public FillCache() throws InterruptedException, HashCollisionException {
 		// Read my TDB dataset
 		String dbDir = myModel;
 		Dataset ds = TDBFactory.createDataset(dbDir);

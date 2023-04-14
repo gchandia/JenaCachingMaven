@@ -2,6 +2,7 @@ package cl.uchile.dcc.caching.queries;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +34,7 @@ public class ExecuteAllQueries {
 	private static String myModel = "/home/gchandia/WikiDB";
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 	  InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv"));
 	  //InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	  final Scanner sc = new Scanner(is);
@@ -84,7 +85,6 @@ public class ExecuteAllQueries {
 			  catch (ResultSetException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
 			  catch (QueryParseException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
 			  catch (IOException e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
-			  catch (Exception e) {er.println("Info for " + (queryNumber - 1) + '\n' + e.getMessage());}
 			}
 		};
 		
@@ -95,9 +95,15 @@ public class ExecuteAllQueries {
 		
 		try { 
 		  future.get(15, TimeUnit.SECONDS); 
-		} catch (InterruptedException ie) {}
-		  catch (ExecutionException ee) {}
-		  catch (TimeoutException te) {}
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		}
+		  catch (ExecutionException ee) {
+			  ee.printStackTrace();
+		  }
+		  catch (TimeoutException te) {
+			  te.printStackTrace();
+		  }
 		}
 		
 		w.close();
