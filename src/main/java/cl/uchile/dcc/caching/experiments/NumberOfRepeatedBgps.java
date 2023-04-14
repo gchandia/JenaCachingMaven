@@ -2,9 +2,12 @@ package cl.uchile.dcc.caching.experiments;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,6 +28,7 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.ElementGroup;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.caching.common_joins.Parser;
@@ -95,7 +99,7 @@ public class NumberOfRepeatedBgps {
 	return output;
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
 	ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	
 	for (OpBGP bgp : input) {
@@ -249,7 +253,7 @@ public class NumberOfRepeatedBgps {
 	}
   }
   
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws IOException {
 	InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
 	
@@ -286,9 +290,10 @@ public class NumberOfRepeatedBgps {
 	        w.println("Info for query number " + (queryNumber - 1));
 	        w.println(attemptedToCache);
 	        
-	      } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-	                                   //e.printStackTrace(w);
-	                                   //w.println();}
+	      } catch (InterruptedException | HashCollisionException | UnsupportedEncodingException e) {
+	    	w.println("Info for query number " + (queryNumber - 1)); 
+	        e.printStackTrace(w);
+	        w.println();
 	      }
 	    }
 	  };

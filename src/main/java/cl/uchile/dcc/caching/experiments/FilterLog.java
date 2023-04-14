@@ -2,14 +2,16 @@ package cl.uchile.dcc.caching.experiments;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.zip.GZIPInputStream;
 
 public class FilterLog {
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws FileNotFoundException, IOException {
 	final PrintWriter w = new PrintWriter(new FileWriter("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	
 	InputStream is = new GZIPInputStream(new FileInputStream(new File("D:\\wikidata_logs\\2017-07-10_2017-08-06_all.tsv.gz")));

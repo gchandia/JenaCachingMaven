@@ -3,7 +3,10 @@ package cl.uchile.dcc.caching.common_joins;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +24,7 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.expr.ExprException;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.utils.QueryBuilder;
 import cl.uchile.dcc.caching.utils.QueryModifier;
@@ -52,12 +56,12 @@ public class Reader {
 		return t.getSubject() + "\t" + t.getPredicate() + "\t" + t.getObject();
 	}
 	
-	private InputStreamReader getReader(File file) throws Exception {
+	private InputStreamReader getReader(File file) throws IOException {
 		if (this.compressed) return new InputStreamReader(new GZIPInputStream(new FileInputStream(file)));
 		return new InputStreamReader(new FileInputStream(file));
 	}
 	
-	private int getFileSize(File file) throws Exception {
+	private int getFileSize(File file) throws IOException {
 		int total = 0;
 		BufferedReader tsv = new BufferedReader(getReader(file));
 		
@@ -75,9 +79,10 @@ public class Reader {
 	 * @param file
 	 * @param stop
 	 * @return Set with all queries from file
+	 * @throws IOException 
 	 * @throws Exception
 	 */
-	public HashSet<Query> getAllFileQueries(File file) throws Exception {
+	public HashSet<Query> getAllFileQueries(File file) throws IOException {
 		int total = getFileSize(file);
 		HashSet<Query> set = new HashSet<Query>(total);
 		
@@ -93,13 +98,9 @@ public class Reader {
 				q = parser.parseDbPedia(line);	// Parse line and turn into query q
 				//System.out.println(q);
 				set.add(q);
-			} catch (QueryParseException e) {}	// Catch all weird exceptions found, few cases except QPE
-			catch (NullPointerException e) {}
-			catch (UnsupportedOperationException e) {}
-			catch (DatatypeFormatException e) {}
-			catch (ExprException e) {}
-			catch (StringIndexOutOfBoundsException e) {}
-			catch (NoSuchElementException e) {}
+			} catch (UnsupportedOperationException e) {
+				e.printStackTrace();
+			}
 			
 			System.out.println("Reading line: " + i + " of " + total);
 		}
@@ -112,9 +113,10 @@ public class Reader {
 	 * @param file input file
 	 * @param stop how many queries you want
 	 * @return Set with size N of queries
+	 * @throws IOException 
 	 * @throws Exception
 	 */
-	public HashSet<Query> getNFileQueries(File file, int stop) throws Exception {
+	public HashSet<Query> getNFileQueries(File file, int stop) throws IOException {
 		HashSet<Query> set = new HashSet<Query>(stop);
 		
 		BufferedReader tsv = new BufferedReader(getReader(file));
@@ -132,13 +134,9 @@ public class Reader {
 				System.out.println(q);
 				set.add(q);
 				System.out.println("Obtained " + ++read + " queries of " + stop);
-			} catch (QueryParseException e) {}	// Catch all weird exceptions found, few cases except QPE
-			catch (NullPointerException e) {}
-			catch (UnsupportedOperationException e) {}
-			catch (DatatypeFormatException e) {}
-			catch (ExprException e) {}
-			catch (StringIndexOutOfBoundsException e) {}
-			catch (NoSuchElementException e) {}
+			} catch (UnsupportedOperationException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		System.out.println(set.size());
@@ -147,8 +145,11 @@ public class Reader {
 	
 	/**
 	 * Only visits files inside folder, not other folders
+	 * @throws HashCollisionException 
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public HashMap<String, Integer> visitFolderQueries() throws Exception {
+	public HashMap<String, Integer> visitFolderQueries() throws IOException, InterruptedException, HashCollisionException {
 		HashMap<String, Integer> map = new HashMap<String, Integer>(this.nQueries * 3);
 		for (File entry : this.folder.listFiles()) {
 			if (!entry.isDirectory()) map.putAll(visitFileJoins(entry));
@@ -156,7 +157,7 @@ public class Reader {
 		return map;
 	}
 	
-	public HashMap<String, Integer> visitFileBgps(File file) throws Exception {
+	public HashMap<String, Integer> visitFileBgps(File file) throws IOException, InterruptedException, HashCollisionException {
 		System.out.println("Begin reading: " + file.getName());
 		int total = getFileSize(file);
 		HashMap<String, Integer> map = new HashMap<String, Integer>(this.nQueries * 3);
@@ -219,20 +220,15 @@ public class Reader {
 						else map.replace(j, map.get(j) + 1);
 					}
 				}
-			} catch (QueryParseException e) {}	// Catch all weird exceptions found, few cases except QPE
-			catch (NullPointerException e) {}
-			catch (UnsupportedOperationException e) {}
-			catch (DatatypeFormatException e) {}
-			catch (ExprException e) {}
-			catch (StringIndexOutOfBoundsException e) {}
-			catch (NoSuchElementException e) {}
-			catch (IllegalArgumentException e) {}
+			} catch (UnsupportedOperationException e) {
+				e.printStackTrace();
+			}
 			System.out.println("Reading line: " + i + " of " + total);
 		}
 		return map;
 	}
 	
-	public HashMap<Integer, HashMap<String, Integer>> visitFileSubBgpsWithSize(File file) throws Exception {
+	public HashMap<Integer, HashMap<String, Integer>> visitFileSubBgpsWithSize(File file) throws FileNotFoundException, IOException {
 		System.out.println("Begin reading: " + file.getName());
 		int total = getFileSize(file);
 		HashMap<Integer, HashMap<String, Integer>> finalMap = new HashMap<Integer, HashMap<String, Integer>>(100); // I don't think any subbgp is over size 100
@@ -301,13 +297,7 @@ public class Reader {
 						else finalMap.get(size).replace(j, finalMap.get(size).get(j) + 1);
 					}
 				}
-			} catch (QueryParseException e) {}	// Catch all weird exceptions found, few cases except QPE
-			catch (NullPointerException e) {}
-			catch (UnsupportedOperationException e) {}
-			catch (DatatypeFormatException e) {}
-			catch (ExprException e) {}
-			catch (StringIndexOutOfBoundsException e) {}
-			catch (NoSuchElementException e) {}
+			} catch (InterruptedException | HashCollisionException e) { e.printStackTrace(); }	// Catch all weird exceptions found, few cases except QPE
 			System.out.println("Reading line: " + i + " of " + total);
 		}
 		return finalMap;
@@ -382,7 +372,7 @@ public class Reader {
 	 * @return
 	 * @throws Exception
 	 */
-	public HashMap<String, Integer> getCanonTriples(File file) throws Exception {
+	public HashMap<String, Integer> getCanonTriples(File file) throws FileNotFoundException, IOException, InterruptedException, HashCollisionException {
 		
 		BufferedReader tsv;
 		if (this.compressed) tsv = new BufferedReader (new InputStreamReader(new GZIPInputStream(new FileInputStream(file))));
@@ -414,13 +404,7 @@ public class Reader {
 					if (map.get(j) == null) map.put(j, 1);
 					else map.replace(j, map.get(j) + 1);
 				}
-			} catch (QueryParseException e) {}	// Catch all weird exceptions found, few cases except QPE
-			catch (NullPointerException e) {}
-			catch (UnsupportedOperationException e) {}
-			catch (DatatypeFormatException e) {}
-			catch (ExprException e) {}
-			catch (StringIndexOutOfBoundsException e) {}
-			catch (NoSuchElementException e) {}
+			} catch (InterruptedException e) { e.printStackTrace(); }	// Catch all weird exceptions found, few cases except QPE
 			// System.out.println("File queries missing: " + ++start + "/" + stop);
 			System.out.println("Reading line: " + i + " of " + total);
 		}
@@ -433,8 +417,11 @@ public class Reader {
 	 * @param file
 	 * @param flag
 	 * @param number
+	 * @throws IOException 
+	 * @throws HashCollisionException 
+	 * @throws InterruptedException 
 	 */
-	public HashMap<String, Integer> visitFileJoins(File file) throws Exception {
+	public HashMap<String, Integer> visitFileJoins(File file) throws IOException, InterruptedException, HashCollisionException {
 		System.out.println("Begin reading: " + file.getName());
 		
 		int start = 0;
@@ -475,13 +462,9 @@ public class Reader {
 					if (map.get(j) == null) map.put(j, 1);
 					else map.replace(j, map.get(j) + 1);
 				}
-			} catch (QueryParseException e) {}	// Catch all weird exceptions found, few cases except QPE
-			catch (NullPointerException e) {}
-			catch (UnsupportedOperationException e) {}
-			catch (DatatypeFormatException e) {}
-			catch (ExprException e) {}
-			catch (StringIndexOutOfBoundsException e) {}
-			catch (NoSuchElementException e) {}
+			}  catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			System.out.println("File queries missing: " + start + "/" + stop);
 		}
 		

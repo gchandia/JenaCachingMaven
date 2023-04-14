@@ -1,6 +1,7 @@
 package cl.uchile.dcc.caching.common_joins;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +17,7 @@ public class Writer {
 		this.output = folder;
 	}
 	
-	public void writeQueries(HashSet<Query> map) throws Exception {
+	public void writeQueries(HashSet<Query> map) throws IOException {
 		System.out.println("Begin Writing");
 		PrintWriter w = new PrintWriter(new FileWriter(this.output));
 		int total = map.size();
@@ -34,7 +35,7 @@ public class Writer {
 		System.out.println("Ended writing");
 	}
 	
-	public void writeJoins(HashMap<String, Integer> map) throws Exception {
+	public void writeJoins(HashMap<String, Integer> map) throws IOException {
 		System.out.println("Begin Writing");
 		PrintWriter w = new PrintWriter(new FileWriter(this.output));
 		int total = map.size();

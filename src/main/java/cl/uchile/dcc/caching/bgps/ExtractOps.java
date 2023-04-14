@@ -1,5 +1,6 @@
 package cl.uchile.dcc.caching.bgps;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.algebra.Algebra;
@@ -66,7 +67,7 @@ public class ExtractOps {
 		target.getPattern();
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws UnsupportedEncodingException {
 		String query6 = "SELECT  ?v0 ?v1 ?v2 ?v3 ?v4\n"
 				+ "WHERE\n"
 				+ "  {   {   {   { ?v0  <http://dbpedia.org/ontology/iataLocationIdentifier>  ?v4 ;\n"

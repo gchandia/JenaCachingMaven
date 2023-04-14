@@ -3,7 +3,9 @@ package cl.uchile.dcc.caching.queries;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import org.apache.jena.sparql.algebra.Transformer;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.tdb.TDBFactory;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.LRUCache;
@@ -46,7 +49,7 @@ public class ExperimentOne {
 	private static Dataset ds = TDBFactory.createDataset(myModel);
 	private static int j = 1;
 	
-	public static int getNumberOfCompressedLines(String input) throws Exception {
+	public static int getNumberOfCompressedLines(String input) throws FileNotFoundException, IOException {
 		int lines = 0;
 		BufferedReader tsv = 
 				new BufferedReader (
@@ -64,7 +67,7 @@ public class ExperimentOne {
 		return lines;
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws InterruptedException, HashCollisionException, FileNotFoundException, IOException {
 
 		// Write if I wanna write, but I'll be using read to query over it mostly
 		ds.begin(ReadWrite.READ);

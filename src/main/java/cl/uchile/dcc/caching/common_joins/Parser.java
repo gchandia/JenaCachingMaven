@@ -1,5 +1,6 @@
 package cl.uchile.dcc.caching.common_joins;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +44,7 @@ public class Parser {
 			"PREFIX arco: <http://www.gate.ac.uk/ns/ontologies/arcomem-data-model.owl#>" +
 			System.getProperty("line.separator");
 	
-	public Query parseDbPedia(String text) throws Exception {
+	public Query parseDbPedia(String text) throws UnsupportedEncodingException {
 		String[] line = text.split("\t");
 		String query = line[0];
 		String spQuery = String.join(" ", query.split("\\+"));
@@ -74,7 +75,7 @@ public class Parser {
 		return q;
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws UnsupportedEncodingException {
 		Parser p = new Parser();
 		String s = "SELECT  ?var1 ?var2 ?var3 ?var4\r\n"
 				+ "WHERE\r\n"

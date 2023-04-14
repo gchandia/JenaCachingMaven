@@ -37,6 +37,8 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.tdb.TDBFactory;
+
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.common_joins.Joins;
@@ -146,7 +148,7 @@ public class LogReaderThreadPool {
 	return (afterOneResult - beforeOneResult);
   }
   
-  static ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  static ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	
     for (OpBGP bgp : input) {
@@ -422,16 +424,17 @@ public class LogReaderThreadPool {
         output += "Number of retrievals: " + myCache.getRetrievalHits() + '\n';
         output += '\n';
       }
-    } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-                           //e.printStackTrace(w);
-                           //w.println();}
-    }
+    } catch (InterruptedException | HashCollisionException e) {
+    	w.println("Info for query number " + (queryNumber - 1)); 
+    	e.printStackTrace(w);
+        w.println();
+    } 
     w.println(output);
     w.flush();
 	model.commit();
   }
   
-  public void readLog(File file) throws Exception {
+  public void readLog(File file) throws IOException {
     final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
 			 							  + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 			 							  + "_Results.txt"));
