@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +40,7 @@ import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.tdb.TDBFactory;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.common_joins.Joins;
@@ -144,7 +146,7 @@ public class LogReader {
 	return (afterOneResult - beforeOneResult);
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	
     for (OpBGP bgp : input) {
@@ -436,13 +438,14 @@ public class LogReader {
               /*w.println("Info for query number " + (queryNumber - 1));
               w.println("Origin: " + qu.split("\t")[3]);
               w.println(ar);*/
-              w.println("");
+              w.println();
               w.flush();
             }
-          } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-                                   //e.printStackTrace(w);
-                                   //w.println();}
-        }
+          } catch (InterruptedException | HashCollisionException | UnsupportedEncodingException e) {
+        	w.println("Info for query number " + (queryNumber - 1));
+        	e.printStackTrace(w);
+            w.println();
+          }
       }
     };
     
@@ -452,9 +455,14 @@ public class LogReader {
     executor.shutdown();
     
     try {
-        future.get(15, TimeUnit.SECONDS);
+      future.get(15, TimeUnit.SECONDS);
     } catch (InterruptedException ie) {}
-      catch (ExecutionException ee) {}
+      catch (ExecutionException ee) {
+      w.println("Info for query number " + (queryNumber - 1)); 
+      ee.printStackTrace(w);
+      ee.printStackTrace(w);
+      w.println();
+    }
       catch (TimeoutException te) {}
     }
 	

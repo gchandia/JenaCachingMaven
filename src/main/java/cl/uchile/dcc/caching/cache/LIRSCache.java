@@ -1,7 +1,7 @@
 package cl.uchile.dcc.caching.cache;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +21,6 @@ import org.apache.jena.tdb.TDBFactory;
 
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.common_joins.Parser;
-import cl.uchile.dcc.qcan.transformers.BGPCollapser;
 
 class Stack {
   //We map LIRSStruct as key as to allow duplicate OpBGPs
@@ -345,7 +344,7 @@ public class LIRSCache extends AbstractCache {
 	  queryC = p.parseDbPedia(blockC);
 	  queryD = p.parseDbPedia(blockD);
 	  queryE = p.parseDbPedia(blockE);
-	} catch (Exception e) {}
+	} catch (UnsupportedEncodingException  e) {}
 	
 	OpBGP bgpA = ExtractBgps.getBgps(Algebra.compile(queryA)).get(0);
 	OpBGP bgpB = ExtractBgps.getBgps(Algebra.compile(queryB)).get(0);

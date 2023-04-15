@@ -1,5 +1,6 @@
 package cl.uchile.dcc.caching.cache;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -79,8 +80,8 @@ public class RRCache extends AbstractCache {
 	  queryC = p.parseDbPedia(blockC);
 	  queryD = p.parseDbPedia(blockD);
 	  queryE = p.parseDbPedia(blockE);
-	} catch (Exception e) {}
-		
+	} catch (UnsupportedEncodingException  e) {}
+	
 	OpBGP bgpA = ExtractBgps.getBgps(Algebra.compile(queryA)).get(0);
 	OpBGP bgpB = ExtractBgps.getBgps(Algebra.compile(queryB)).get(0);
 	OpBGP bgpC = ExtractBgps.getBgps(Algebra.compile(queryC)).get(0);

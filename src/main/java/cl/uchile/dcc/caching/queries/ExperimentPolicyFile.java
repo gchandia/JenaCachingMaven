@@ -3,8 +3,10 @@ package cl.uchile.dcc.caching.queries;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,6 +42,8 @@ import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementVisitorBase;
 import org.apache.jena.sparql.syntax.ElementWalker;
 import org.apache.jena.tdb.TDBFactory;
+
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
@@ -69,7 +73,7 @@ public class ExperimentPolicyFile {
   private static String qu = "";
   private static PrintWriter results;
   
-  public ExperimentPolicyFile() throws Exception {
+  public ExperimentPolicyFile() throws IOException {
     checkedSubQueries = new ArrayList<Query>();
     checkedBgpSubQueries = new ArrayList<OpBGP>();
     mySubQueries = new ArrayList<Query>();
@@ -233,7 +237,7 @@ public class ExperimentPolicyFile {
 	return (afterAllResults - beforeAllResults);
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
     
     for (OpBGP bgp : input) {
@@ -533,7 +537,7 @@ public class ExperimentPolicyFile {
     }
   }
   
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws IOException {
     /*final BufferedReader tsv = 
         new BufferedReader (
                 new InputStreamReader(
@@ -585,25 +589,23 @@ public class ExperimentPolicyFile {
               String nbgps = "";
               
               // If there are 10 or less TPs in the query
-              if (numberOfTPs.size() <= 10) {
-            	//Only get subqueries with highest priority TP for each bgp
-              	ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
-            	long gsqTime = System.nanoTime();
-            	gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
-                //Sort subqueries from biggest to smallest
-                Collections.sort(subQueries, ep.subQueryComparator);
-                long brdTime = System.nanoTime();
-                brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
-                subQueries = ep.removeDisconnectedBgps(subQueries);
-                long ardTime = System.nanoTime();
-                ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
-                nbgps = "Number of bgps to canonicalise: " + subQueries.size();
-                ArrayList<OpBGP> bgpsq = ep.canonicaliseBgpList(subQueries);
-                long cblTime = System.nanoTime();
-                cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
-                //System.out.println("Number of subqueries is: " + bgpsq.size());
-                ep.checkBgps(bgpsq);
-              }
+              //Only get subqueries with highest priority TP for each bgp
+              ArrayList<OpBGP> subQueries = ep.getSubQueriesV4(bgps);
+              long gsqTime = System.nanoTime();
+              gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
+              //Sort subqueries from biggest to smallest
+              Collections.sort(subQueries, ep.subQueryComparator);
+              long brdTime = System.nanoTime();
+              brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
+              subQueries = ep.removeDisconnectedBgps(subQueries);
+              long ardTime = System.nanoTime();
+              ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
+              nbgps = "Number of bgps to canonicalise: " + subQueries.size();
+              ArrayList<OpBGP> bgpsq = ep.canonicaliseBgpList(subQueries);
+              long cblTime = System.nanoTime();
+              cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
+              //System.out.println("Number of subqueries is: " + bgpsq.size());
+              ep.checkBgps(bgpsq);
               
               //System.out.println("CACHE SIZE IS: " + myCache.cacheSize());
               //System.out.println("RESULTS SIZE IS: " + myCache.resultsSize());
@@ -669,9 +671,11 @@ public class ExperimentPolicyFile {
                 w.println("");
                 w.flush();
               }
-            } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-                                   //e.printStackTrace(w);
-                                   //w.println();}
+            } catch (UnsupportedEncodingException | InterruptedException | HashCollisionException e) {
+              w.println("Info for query number " + (queryNumber - 1)); 
+              e.printStackTrace(w);
+              e.printStackTrace();
+              w.println();
             }
         }
     };

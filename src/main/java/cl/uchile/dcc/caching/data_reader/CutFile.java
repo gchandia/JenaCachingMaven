@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.zip.GZIPInputStream;
 
 public class CutFile {
 	
-	static public void cut(String file, String output, int cutPoint) throws Exception {
+	static public void cut(String file, String output, int cutPoint) throws IOException {
 		BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(

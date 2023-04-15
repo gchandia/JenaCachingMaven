@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 public class SeparateFile {
 	
-	public static void separateFile(String file, String output, int copies) throws Exception {
+	public static void separateFile(String file, String output, int copies) throws IOException {
 		BufferedReader tsv = 
 				new BufferedReader (
 						new InputStreamReader(
@@ -28,7 +29,7 @@ public class SeparateFile {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		separateFile("D:\\wikidata_logs\\wikidata_10K.tsv", "D:\\wikidata_logs\\wikidata_1K", 10);
 	}
 }

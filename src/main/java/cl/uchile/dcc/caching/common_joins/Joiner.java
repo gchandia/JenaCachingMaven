@@ -3,6 +3,7 @@ package cl.uchile.dcc.caching.common_joins;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
@@ -21,7 +22,7 @@ public class Joiner {
 		this.nQueries++;
 	}
 	
-	public void countLines(File folder) throws Exception {
+	public void countLines(File folder) throws IOException {
 		
 		for (File entry : folder.listFiles()) {
 			BufferedReader tsv = new BufferedReader(new InputStreamReader(new FileInputStream(entry)));
@@ -38,7 +39,7 @@ public class Joiner {
 		return this.nQueries;
 	}
 	
-	public HashMap<String, Integer> joinFolder(File folder) throws Exception {
+	public HashMap<String, Integer> joinFolder(File folder) throws IOException {
 		HashMap<String, Integer> map = new HashMap<String, Integer>(this.nQueries);
 		for (File entry : folder.listFiles()) {
 			if (!entry.isDirectory()) map.putAll(mapJoins(entry));
@@ -46,7 +47,7 @@ public class Joiner {
 		return map;
 	}
 	
-	public HashMap<String, Integer> mapJoins(File entry) throws Exception {
+	public HashMap<String, Integer> mapJoins(File entry) throws IOException {
 		HashMap<String, Integer> map = new HashMap<String, Integer>(this.nQueries);
 		BufferedReader tsv = new BufferedReader(new InputStreamReader(new FileInputStream(entry)));
 		

@@ -6,6 +6,7 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.Syntax;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.qcan.main.SingleQuery;
 
 
@@ -16,7 +17,7 @@ import cl.uchile.dcc.qcan.main.SingleQuery;
  */
 public class QueryCanon {
 	
-	public Query getCanonQuery(Query q) throws Exception {
+	public Query getCanonQuery(Query q) throws InterruptedException, HashCollisionException {
 		SingleQuery sq = null;
 		try {
 			sq = new SingleQuery(q.toString(), true, true, false, true);			

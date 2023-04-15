@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,6 +31,8 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.engine.QueryIterator;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.tdb.TDBFactory;
+
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.common_joins.Joins;
@@ -135,7 +138,7 @@ public class LogReaderSequence {
 	return (afterOneResult - beforeOneResult);
   }
   
-  static ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  static ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 	
     for (OpBGP bgp : input) {
@@ -314,7 +317,7 @@ public class LogReaderSequence {
   }
   
   @SuppressWarnings("deprecation")
-private static void processQuery(Query q, PrintWriter w) {
+  private static void processQuery(Query q, PrintWriter w) {
 	String output = "";
     try {
       System.out.println("READING QUERY " + queryNumber++);
@@ -413,7 +416,7 @@ private static void processQuery(Query q, PrintWriter w) {
         output += "Number of retrievals: " + myCache.getRetrievalHits() + '\n';
         output += '\n';
       }
-    } catch (Exception e) { 
+    } catch (InterruptedException | HashCollisionException e) { 
       e.printStackTrace();
     } finally {
       w.println(output);
@@ -433,7 +436,7 @@ private static void processQuery(Query q, PrintWriter w) {
 		Query q = p.parseDbPedia(qu);
 		processQuery(q, w);
 	  }
-	} catch (Exception e) { e.printStackTrace(); }
+	} catch (UnsupportedEncodingException  e) { e.printStackTrace(); }
 	w.close();
   }
 }

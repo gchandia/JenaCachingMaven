@@ -12,6 +12,7 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.ElementGroup;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.common_joins.Joins;
 import cl.uchile.dcc.qcan.main.SingleQuery;
@@ -62,7 +63,8 @@ public class QueryBuilder {
 		return output;
 	}
 	
-	public static ArrayList<ArrayList<OpBGP>> reCanonicalise(ArrayList<ArrayList<OpBGP>> subBGPs) throws Exception{
+	public static ArrayList<ArrayList<OpBGP>> reCanonicalise(ArrayList<ArrayList<OpBGP>> subBGPs) throws InterruptedException, 
+																										 HashCollisionException {
 	    ArrayList<ArrayList<OpBGP>> output = new ArrayList<ArrayList<OpBGP>>();
 	    
 	    for (ArrayList<OpBGP> bgps : subBGPs) {

@@ -1,5 +1,6 @@
 package cl.uchile.dcc.caching.common_joins;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 
 import cl.uchile.dcc.qcan.main.SingleQuery;
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 
 public class Subsets {
@@ -103,7 +105,7 @@ public class Subsets {
 		}
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws UnsupportedEncodingException, InterruptedException, HashCollisionException {
 		Parser parser = new Parser();
 		String s = "SELECT  ?v0\r\n"
 				+ "WHERE\r\n"

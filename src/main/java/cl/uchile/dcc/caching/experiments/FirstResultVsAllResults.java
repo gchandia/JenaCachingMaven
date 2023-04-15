@@ -3,8 +3,10 @@ package cl.uchile.dcc.caching.experiments;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +35,7 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.tdb.TDBFactory;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.caching.bgps.ExtractBgps;
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
@@ -56,7 +59,7 @@ public class FirstResultVsAllResults {
   private static String qu = "";
   private static PrintWriter results;
   
-  public FirstResultVsAllResults() throws Exception {
+  public FirstResultVsAllResults() throws IOException {
 	checkedBgpSubQueries = new ArrayList<OpBGP>();
 	myBgpSubQueries = new ArrayList<OpBGP>();
 	cachedBgpSubQueries = new ArrayList<OpBGP>();
@@ -179,20 +182,20 @@ public class FirstResultVsAllResults {
 	return output;
   }
   
-  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws Exception {
+  ArrayList<OpBGP> canonicaliseBgpList(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
     ArrayList<OpBGP> output = new ArrayList<OpBGP>();
-	    
+	
 	for (OpBGP bgp : input) {
 	  Query q = new Query();
 	  SingleQuery sq;
 	  ElementGroup elg;
-	      
+	  
 	  q = QueryFactory.make();
 	  q.setQuerySelectType();
 	  q.setQueryResultStar(true);
 	  elg = new ElementGroup();
 	  Iterator<Triple> it = bgp.getPattern().iterator();
-	      
+	  
 	  while (it.hasNext()) {
 	    elg.addTriplePattern(it.next());
 	  }
@@ -316,7 +319,7 @@ public class FirstResultVsAllResults {
 	}
   }
   
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws IOException {
 	InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	//InputStream is = new FileInputStream(new File("D:\\wikidata_logs\\FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
@@ -349,9 +352,10 @@ public class FirstResultVsAllResults {
 	        ArrayList<OpBGP> bgpsq = frar.canonicaliseBgpList(subQueries);
 	        frar.checkBgps(bgpsq);
 	        
-	      } catch (Exception e) {//w.println("Info for query number " + (queryNumber - 1)); 
-	                                   //e.printStackTrace(w);
-	                                   //w.println();}
+	      } catch (InterruptedException | HashCollisionException | UnsupportedEncodingException e) {
+	    	w.println("Info for query number " + (queryNumber - 1)); 
+	        e.printStackTrace(w);
+	        w.println();
 	      }
 	    }
 	  };
@@ -364,7 +368,10 @@ public class FirstResultVsAllResults {
 	  try {
 	      future.get(15, TimeUnit.SECONDS);
 	  } catch (InterruptedException ie) {}
-	    catch (ExecutionException ee) {}
+	    catch (ExecutionException ee) {
+    	ee.printStackTrace();
+    	ee.printStackTrace(w);
+	  }
 	    catch (TimeoutException te) {}
 	  }
 	  sc.close();

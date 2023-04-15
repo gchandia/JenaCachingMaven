@@ -1,15 +1,17 @@
 package cl.uchile.dcc.caching.common_joins;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 
 public class Controller {
 	
 	@SuppressWarnings("unchecked")
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, InterruptedException, HashCollisionException {
 		/*
 		 * IMPORTANTE: Un par de notas aqui. Primero, es imposible hacer retrieve de las queries totales;
 		 * asi que insistir con triplas o bgps nomas. Piden mucha memoria, tendria que hacer uso de HDD

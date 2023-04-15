@@ -23,6 +23,7 @@ import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.syntax.ElementGroup;
 
+import cl.uchile.dcc.blabel.label.GraphColouring.HashCollisionException;
 import cl.uchile.dcc.qcan.main.SingleQuery;
 
 
@@ -61,19 +62,19 @@ public class ExtractBgps {
 	  return pred + hash256(path);
 	}
 	
-	public static ArrayList<OpBGP> getBgps(Op op){
+	public static ArrayList<OpBGP> getBgps(Op op) {
 		ArrayList<OpBGP> bgps = new ArrayList<OpBGP>();
 		getBgps(op,bgps);
 		return bgps;
 	}
 	
-	public static ArrayList<OpBGP> getSplitBgps(Op op){
+	public static ArrayList<OpBGP> getSplitBgps(Op op) {
 		ArrayList<OpBGP> splitBgps = new ArrayList<OpBGP>();
 		getSplitBgps(op,splitBgps);
 		return splitBgps;
 	}
 	
-	public static void getBgps(Op op, ArrayList<OpBGP> bgps){
+	public static void getBgps(Op op, ArrayList<OpBGP> bgps) {
 		if(op instanceof OpBGP) {
 			bgps.add((OpBGP)op);
 		}else if (op instanceof OpPath) {
@@ -220,7 +221,7 @@ public class ExtractBgps {
 	/*
 	 * Gets bgps and returns bgps of size one that have been canonicalised
 	 */
-	public static ArrayList<OpBGP> separateCanonBGPs(ArrayList<OpBGP> input) throws Exception {
+	public static ArrayList<OpBGP> separateCanonBGPs(ArrayList<OpBGP> input) throws InterruptedException, HashCollisionException {
 		ArrayList<OpBGP> output = new ArrayList<OpBGP>();
 		
 		for (int i = 0; i < input.size(); i++) {
