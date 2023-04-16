@@ -10,7 +10,7 @@ public class GetCustomResults {
       final BufferedReader tsv = 
         new BufferedReader (
           new FileReader(
-            new File("D:\\Thesis\\FilteredLogs_2.tsv_Results.txt")));
+            new File("D:\\Thesis\\CustomV5Final.txt")));
       
       StringBuffer sb1 = new StringBuffer();
       sb1.append("[");
@@ -41,6 +41,7 @@ public class GetCustomResults {
           sb3.append(subs[3]);
           sb3.append(",");
         }
+        System.out.println(line);
         line = tsv.readLine();
       }
       
