@@ -28,6 +28,8 @@ public interface Cache {
             						   ArrayList<OpBGP> bgpList, 
             						   Map<String, String> varMap, 
             						   long startLine);
+	public void dumpCache(String s);
+	public void loadCache(String s);
 	public boolean isBgpInCache(OpBGP input);
 	//For testing purposes only
 	public LinkedHashMap<OpBGP, Integer> getLinkedMap();

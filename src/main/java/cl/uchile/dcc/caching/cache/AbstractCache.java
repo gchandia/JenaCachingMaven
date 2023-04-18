@@ -1,5 +1,11 @@
 package cl.uchile.dcc.caching.cache;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -319,6 +325,30 @@ public abstract class AbstractCache implements Cache {
 		formSolution(br + '\n' + ar + '\n' + bf + '\n' + af + '\n' + bs + '\n' + as + '\n' + bre + '\n' + are);
 	    
 		return output;
+	}
+	
+	public void dumpCache(String s) {
+	  File output = new File(s);
+	  ObjectOutputStream o = null;
+	  try {
+		o = new ObjectOutputStream(new FileOutputStream(output));
+		Iterator<OpBGP> it = getKeys().iterator();
+		while (it.hasNext()) {
+		  OpBGP b = it.next();
+		  Iterator<Triple> itt = b.getPattern().iterator();
+		  while (itt.hasNext()) {
+			o.writeObject(itt.next());
+		  }
+		  o.writeChars("");
+		}
+		o.close();
+	  } catch (IOException e) {
+		e.printStackTrace();
+	  }
+	}
+	
+	public void loadCache(String s) {
+	  
 	}
 	
 	protected abstract void removeFromCache();

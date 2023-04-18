@@ -333,7 +333,7 @@ public class LogReader {
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 														 + "_Results.txt"));
 	
-    for (int i = 1; i <= 50000; i++) {
+    for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -363,26 +363,23 @@ public class LogReader {
             String cbl = "";
             String nbgps = "";
             
-            // If there are 10 or less TPs in the query
-            if (numberOfTPs.size() <= 10) {
-              //Only get subqueries with highest priority TP for each bgp
-              ArrayList<OpBGP> subQueries = getSubQueriesV4(bgps);
-              long gsqTime = System.nanoTime();
-              gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
-              //Sort subqueries from biggest to smallest
-              Collections.sort(subQueries, subQueryComparator);
-              long brdTime = System.nanoTime();
-              brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
-              subQueries = removeDisconnectedBgps(subQueries);
-              long ardTime = System.nanoTime();
-              ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
-              nbgps = "Number of bgps to canonicalise: " + subQueries.size();
-              ArrayList<OpBGP> bgpsq = canonicaliseBgpList(subQueries);
-              long cblTime = System.nanoTime();
-              cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
-              //System.out.println("Number of subqueries is: " + bgpsq.size());
-              checkBgps(bgpsq);
-            }
+            //Only get subqueries with highest priority TP for each bgp
+            ArrayList<OpBGP> subQueries = getSubQueriesV4(bgps);
+            long gsqTime = System.nanoTime();
+            gsq = "Time to run getSubQueries: " + (gsqTime - startLine);
+            //Sort subqueries from biggest to smallest
+            Collections.sort(subQueries, subQueryComparator);
+            long brdTime = System.nanoTime();
+            brd = "Time before removing disconnected bgps: " + (brdTime - startLine);
+            subQueries = removeDisconnectedBgps(subQueries);
+            long ardTime = System.nanoTime();
+            ard = "Time after removing disconnected bgps: " + (ardTime - startLine);
+            nbgps = "Number of bgps to canonicalise: " + subQueries.size();
+            ArrayList<OpBGP> bgpsq = canonicaliseBgpList(subQueries);
+            long cblTime = System.nanoTime();
+            cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
+            //System.out.println("Number of subqueries is: " + bgpsq.size());
+            checkBgps(bgpsq);
             
             Op inputOp = Algebra.compile(q);
             Transform cacheTransform = new CacheTransformCopy(myCache, startLine, numberOfTPs);
@@ -465,7 +462,6 @@ public class LogReader {
     }
       catch (TimeoutException te) {}
     }
-	
 	w.close();
 	sc.close();
 	model.commit();
