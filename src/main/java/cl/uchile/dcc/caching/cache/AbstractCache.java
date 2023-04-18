@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.jena.ext.com.google.common.collect.Iterators;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
@@ -333,6 +334,7 @@ public abstract class AbstractCache implements Cache {
 	  try {
 		o = new ObjectOutputStream(new FileOutputStream(output));
 		Iterator<OpBGP> it = getKeys().iterator();
+		System.out.println("SIZE IS: " + Iterators.size(it));
 		while (it.hasNext()) {
 		  OpBGP b = it.next();
 		  Iterator<Triple> itt = b.getPattern().iterator();

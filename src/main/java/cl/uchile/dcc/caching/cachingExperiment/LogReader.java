@@ -333,7 +333,7 @@ public class LogReader {
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 														 + "_Results.txt"));
 	
-    for (int i = 1; i <= 10000; i++) {
+    for (int i = 1; i <= 2000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
