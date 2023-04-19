@@ -19,8 +19,9 @@ public class Controller {
 	myBgpSubQueries = new ArrayList<OpBGP>();
   }
   
-  public void sendRequest(String input, int queryNumber) {
+  public void sendRequest(String input, int queryNumber, String cacheFile) {
 	LogReader r = new LogReader(myCache, myBgpSubQueries);
+	r.loadCache(cacheFile);
 	r.setQueryNumber(queryNumber);
 	try {
 	  r.readLog(new File(input));
@@ -35,9 +36,10 @@ public class Controller {
   
   public static void main(String[] args) {
 	Controller c = new Controller();
-	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1);
-	myCache.dumpCache("/home/gchandia/Thesis/Cache.tsv");
-	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001);
+	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1, "");
+	//myCache.dumpCache("/home/gchandia/Thesis/Cache.tsv");
+	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001, "/home/gchandia/Thesis/Cache.tsv");
+	myCache.dumpCache("/home/gchandia/Thesis/Cache2.tsv");
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_3.tsv", 100001);
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv", 150001);
   }

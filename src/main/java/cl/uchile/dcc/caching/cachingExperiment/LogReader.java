@@ -326,6 +326,10 @@ public class LogReader {
     }
   }
   
+  public void loadCache(String s) {
+	myCache.loadCache(s, model);
+  }
+  
   public void readLog(File file) throws IOException {
 	InputStream is = new FileInputStream(file);
 	final Scanner sc = new Scanner(is);

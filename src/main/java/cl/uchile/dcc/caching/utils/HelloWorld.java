@@ -1,5 +1,6 @@
 package cl.uchile.dcc.caching.utils;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import cl.uchile.dcc.caching.cache.CustomCacheV5;
 import cl.uchile.dcc.caching.common_joins.Parser;
 
 public class HelloWorld {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws ClassNotFoundException, IOException {
 	System.out.println("Hello World");
 	String s = "SELECT  ?var1\r\n"
 			+ "WHERE\r\n"
@@ -78,7 +80,6 @@ public class HelloWorld {
       try {
 		o.writeObject(it.next());
 		o.writeChar('\n');
-		o.writeChars("HOLA");
 		o.close();
 	    w.close();
 	  } catch (IOException e) {
@@ -96,9 +97,28 @@ public class HelloWorld {
 		e.printStackTrace();
 	}
     Cache cc = new CustomCacheV5(1000, 10000000, 990, 10);
+    Triple t = null;
     try {
-	  Triple t = (Triple) oi.readObject();
-	  BasicPattern bp = new BasicPattern();
+		t = (Triple) oi.readObject();
+	} catch (ClassNotFoundException | IOException e1) {
+		e1.printStackTrace();
+	}
+    
+    int i = 2;
+    
+    while (t != null) {
+      try {
+    	i = 4;
+    	Triple tt = (Triple) oi.readObject();
+      } catch (ClassNotFoundException | IOException e) { 
+    	try {
+    	  oi.readChar(); 
+    	} catch (EOFException ee) { ee.printStackTrace(); break; }
+      }
+    }
+    
+    System.out.println(i);
+    BasicPattern bp = new BasicPattern();
 	  bp.add(t);
 	  OpBGP bb = new OpBGP(bp);
 	  Query qq = new Query();
@@ -119,11 +139,10 @@ public class HelloWorld {
 	    rar++;
 	  }
 	  System.out.println(rar);
-	  oi.close();
-	  fi.close();
+	  try {
+		oi.close();
+		fi.close();
 	} catch (IOException e) {
-	  e.printStackTrace();
-	} catch (ClassNotFoundException e) {
 		e.printStackTrace();
 	}
   }

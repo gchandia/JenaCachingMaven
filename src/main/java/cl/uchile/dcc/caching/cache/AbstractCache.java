@@ -1,11 +1,11 @@
 package cl.uchile.dcc.caching.cache;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,12 +17,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.jena.ext.com.google.common.collect.Iterators;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.algebra.Algebra;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.Table;
@@ -30,6 +32,7 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 import org.apache.jena.sparql.algebra.op.OpTable;
 import org.apache.jena.sparql.algebra.table.TableData;
 import org.apache.jena.sparql.algebra.table.TableN;
+import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.binding.BindingBuilder;
@@ -349,8 +352,47 @@ public abstract class AbstractCache implements Cache {
 	  }
 	}
 	
-	public void loadCache(String s) {
-	  
+	public void loadCache(String s, Model model) {
+	  File input = new File(s);
+	  ObjectInputStream oi = null;
+	  try {
+		oi = new ObjectInputStream(new FileInputStream(input));
+	  } catch (IOException e) {
+		e.printStackTrace();
+	  }
+	  Triple t = null;
+	  try {
+		t = (Triple) oi.readObject();
+	  } catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	  } catch (IOException e) {
+		e.printStackTrace();
+	  }
+	  BasicPattern bp = new BasicPattern();
+	  while (true) {
+		try {
+		  bp.add(t);
+		  t = (Triple) oi.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+		  OpBGP bb = new OpBGP(bp);
+		  Query qq = new Query();
+		  ElementGroup elg;
+		  qq = QueryFactory.make();
+		  qq.setQuerySelectType();
+		  qq.setQueryResultStar(true);
+		  elg = new ElementGroup();
+		  elg.addTriplePattern(bb.getPattern().get(0));
+		  qq.setQueryPattern(elg);
+		  ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(qq));
+		  QueryExecution qExec = QueryExecutionFactory.create(qq, model);
+		  ResultSet qResults = qExec.execSelect();
+		  cache(qBgps.get(0), qResults);
+		  bp = new BasicPattern();
+		  try {
+			oi.readChar();
+		  } catch (IOException ee) { ee.printStackTrace(); break; }
+		}
+	  }
 	}
 	
 	protected abstract void removeFromCache();

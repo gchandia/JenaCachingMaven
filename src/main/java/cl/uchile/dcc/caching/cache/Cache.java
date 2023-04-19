@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.algebra.Op;
 import org.apache.jena.sparql.algebra.op.OpBGP;
 
@@ -29,7 +30,7 @@ public interface Cache {
             						   Map<String, String> varMap, 
             						   long startLine);
 	public void dumpCache(String s);
-	public void loadCache(String s);
+	public void loadCache(String s, Model model);
 	public boolean isBgpInCache(OpBGP input);
 	//For testing purposes only
 	public LinkedHashMap<OpBGP, Integer> getLinkedMap();
