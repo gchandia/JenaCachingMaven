@@ -340,7 +340,7 @@ public abstract class AbstractCache implements Cache {
 		  while (itt.hasNext()) {
 			o.writeObject(itt.next());
 		  }
-		  o.writeChars("");
+		  o.writeChar('\n');
 		}
 		o.flush();
 		o.close();

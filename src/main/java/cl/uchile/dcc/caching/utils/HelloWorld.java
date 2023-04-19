@@ -69,7 +69,7 @@ public class HelloWorld {
     FileOutputStream w = null;
     ObjectOutputStream o = null;
 	try {
-		w = new FileOutputStream(new File("D:\\Thesis\\Cache.tsv"));
+		w = new FileOutputStream(new File("D:\\Thesis\\CacheTest.tsv"));
 		o = new ObjectOutputStream(w);
 	} catch (IOException e) {
 		e.printStackTrace();
@@ -77,6 +77,8 @@ public class HelloWorld {
     while (it.hasNext()) {
       try {
 		o.writeObject(it.next());
+		o.writeChar('\n');
+		o.writeChars("HOLA");
 		o.close();
 	    w.close();
 	  } catch (IOException e) {
@@ -86,7 +88,7 @@ public class HelloWorld {
     FileInputStream fi = null;
     ObjectInputStream oi = null;
 	try {
-	  fi = new FileInputStream(new File("D:\\Thesis\\Cache.tsv"));
+	  fi = new FileInputStream(new File("D:\\Thesis\\CacheTest.tsv"));
 	  oi = new ObjectInputStream(fi);
 	} catch (FileNotFoundException e) {
 		e.printStackTrace();
