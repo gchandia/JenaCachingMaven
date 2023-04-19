@@ -334,7 +334,6 @@ public abstract class AbstractCache implements Cache {
 	  try {
 		o = new ObjectOutputStream(new FileOutputStream(output));
 		Iterator<OpBGP> it = getKeys().iterator();
-		System.out.println("SIZE IS: " + Iterators.size(it));
 		while (it.hasNext()) {
 		  OpBGP b = it.next();
 		  Iterator<Triple> itt = b.getPattern().iterator();
@@ -343,6 +342,7 @@ public abstract class AbstractCache implements Cache {
 		  }
 		  o.writeChars("");
 		}
+		o.flush();
 		o.close();
 	  } catch (IOException e) {
 		e.printStackTrace();
