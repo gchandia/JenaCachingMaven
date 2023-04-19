@@ -21,6 +21,7 @@ public class Controller {
   
   public void sendRequest(String input, int queryNumber, String cacheFile) {
 	LogReader r = new LogReader(myCache, myBgpSubQueries);
+	//Better to comment this line if not going to load anything
 	//r.loadCache(cacheFile);
 	r.setQueryNumber(queryNumber);
 	try {

@@ -3,9 +3,11 @@ package cl.uchile.dcc.caching.cache;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -334,6 +336,13 @@ public abstract class AbstractCache implements Cache {
 	public void dumpCache(String s) {
 	  File output = new File(s);
 	  ObjectOutputStream o = null;
+	  PrintWriter w = null;
+	  try {
+		w = new PrintWriter(new FileWriter("TriplesAndResults.tsv"));
+	  } catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	  }
 	  try {
 		o = new ObjectOutputStream(new FileOutputStream(output));
 		Iterator<OpBGP> it = getKeys().iterator();
@@ -345,9 +354,11 @@ public abstract class AbstractCache implements Cache {
 		  }
 		  o.writeChar('\n');
 		  int size = this.queryToSolution.get(b).getTable().size();
-		  o.writeInt(size);
-		  o.writeChar('\n');
+		  w.println(b.toString());
+		  w.println(size);
 		}
+		w.flush();
+		w.close();
 		o.flush();
 		o.close();
 	  } catch (IOException e) {
