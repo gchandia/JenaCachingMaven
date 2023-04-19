@@ -344,6 +344,9 @@ public abstract class AbstractCache implements Cache {
 			o.writeObject(itt.next());
 		  }
 		  o.writeChar('\n');
+		  int size = this.queryToSolution.get(b).getTable().size();
+		  o.writeInt(size);
+		  o.writeChar('\n');
 		}
 		o.flush();
 		o.close();
