@@ -338,7 +338,7 @@ public abstract class AbstractCache implements Cache {
 	  ObjectOutputStream o = null;
 	  PrintWriter w = null;
 	  try {
-		w = new PrintWriter(new FileWriter("TriplesAndResults.tsv"));
+		w = new PrintWriter(new FileWriter("home/gchandia/Thesis/TriplesAndResults.tsv"));
 	  } catch (IOException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
