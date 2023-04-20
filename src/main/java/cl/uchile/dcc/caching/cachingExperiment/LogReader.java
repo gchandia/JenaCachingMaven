@@ -87,6 +87,7 @@ public class LogReader {
 	}
 	o.flush();
 	o.close();
+	System.out.println("Finished writing subqueries!");
     } catch (IOException e) {
 	  e.printStackTrace();
     }
@@ -396,6 +397,9 @@ public class LogReader {
 	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 														 + "_Results.txt"));
+	final PrintWriter ww = new PrintWriter(new FileWriter("/home/gchandia/Thesis/"
+														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length())
+														 + "_Errors.txt"));
 	
     for (int i = 1; i <= 50000; i++) {
       final Runnable stuffToDo = new Thread() {
@@ -504,9 +508,9 @@ public class LogReader {
               w.flush();
             }
           } catch (InterruptedException | HashCollisionException | UnsupportedEncodingException e) {
-        	w.println("Info for query number " + (queryNumber - 1));
-        	e.printStackTrace(w);
-            w.println();
+        	ww.println("Info for query number " + (queryNumber - 1));
+        	e.printStackTrace(ww);
+            ww.println();
           }
       }
     };
@@ -520,14 +524,15 @@ public class LogReader {
       future.get(15, TimeUnit.SECONDS);
     } catch (InterruptedException ie) {}
       catch (ExecutionException ee) {
-      w.println("Info for query number " + (queryNumber - 1)); 
-      ee.printStackTrace(w);
-      ee.printStackTrace(w);
-      w.println();
+      ww.println("Info for query number " + (queryNumber - 1)); 
+      ee.printStackTrace(ww);
+      ee.printStackTrace(ww);
+      ww.println();
     }
       catch (TimeoutException te) {}
     }
 	w.close();
+	ww.close();
 	sc.close();
 	model.commit();
   }

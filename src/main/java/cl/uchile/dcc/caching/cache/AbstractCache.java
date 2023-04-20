@@ -347,6 +347,7 @@ public abstract class AbstractCache implements Cache {
 		}
 		o.flush();
 		o.close();
+		System.out.println("Finished dumping cache!");
 	  } catch (IOException e) {
 		e.printStackTrace();
 	  }

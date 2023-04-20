@@ -10,7 +10,7 @@ public class GetCustomResults {
       final BufferedReader tsv = 
         new BufferedReader (
           new FileReader(
-            new File("D:\\Thesis\\CustomV5Final.txt")));
+            new File("D:\\Thesis\\FilteredLogs_1.tsv_Results.txt")));
       
       StringBuffer sb1 = new StringBuffer();
       sb1.append("[");
@@ -24,14 +24,20 @@ public class GetCustomResults {
       int numberOfInfo = 0;
       
       String line = tsv.readLine();
+      while (line != null) {
+    	String[] subs = line.split(" ");
+    	if (subs[0].equals("Query")) {
+    	  numberOfInfo++;
+    	  sb1.append(subs[5] + ",");
+    	}
+    	System.out.println(line);
+    	line = tsv.readLine();
+      }
       
-      while(line != null) {
+      /*while(line != null) {
         String[] subs = line.split(" ");
-        if (subs[0].equals("Info")) {
-          numberOfInfo++;
-          System.out.println(line);
-        }
         if (subs[0].equals("Number") && subs[1].equals("of") && subs[2].equals("results")) {
+          numberOfInfo++;
           sb1.append(subs[6]);
           sb1.append(",");
         } else if (subs[0].equals("Reading") && subs[1].equals("one")) {
@@ -41,9 +47,8 @@ public class GetCustomResults {
           sb3.append(subs[3]);
           sb3.append(",");
         }
-        System.out.println(line);
         line = tsv.readLine();
-      }
+      }*/
       
       sb1.append("]");
       sb2.append("]");
