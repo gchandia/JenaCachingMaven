@@ -2,9 +2,12 @@ package cl.uchile.dcc.caching.cachingExperiment;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -66,6 +69,63 @@ public class LogReader {
 	cachedBgpSubQueries = new ArrayList<OpBGP>();
 	ds.begin(ReadWrite.READ);
     model = ds.getDefaultModel();
+  }
+  
+  public void writeSubQueries(String s) {
+	File output = new File(s);
+	ObjectOutputStream o = null;
+	try {
+	  o = new ObjectOutputStream(new FileOutputStream(output));
+	  Iterator<OpBGP> it = myBgpSubQueries.iterator();
+	  while (it.hasNext()) {
+	  OpBGP b = it.next();
+	  Iterator<Triple> itt = b.getPattern().iterator();
+	  while (itt.hasNext()) {
+		o.writeObject(itt.next());
+	  }
+	  o.writeChar('\n');
+	}
+	o.flush();
+	o.close();
+    } catch (IOException e) {
+	  e.printStackTrace();
+    }
+  }
+  
+  public void loadSubQueries(String s) {
+	File input = new File(s);
+	ObjectInputStream oi = null;
+	try {
+	  oi = new ObjectInputStream(new FileInputStream(input));
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+	Triple t = null;
+	try {
+	  t = (Triple) oi.readObject();
+	} catch (ClassNotFoundException e) {
+	  e.printStackTrace();
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+	BasicPattern bp = new BasicPattern();
+	while (true) {
+	  try {
+	    bp.add(t);
+		t = (Triple) oi.readObject();
+	  } catch (ClassNotFoundException | IOException e) {
+		OpBGP bb = new OpBGP(bp);
+		myBgpSubQueries.add(bb);
+		try {
+		  oi.readChar();
+		  t = (Triple) oi.readObject();
+		} catch (IOException ee) { 
+		  ee.printStackTrace(); break; 
+		} catch (ClassNotFoundException e1) {
+		  e1.printStackTrace();
+		}
+	  }
+	}
   }
   
   public void setQueryNumber(int queryNumber) {
@@ -337,7 +397,7 @@ public class LogReader {
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 														 + "_Results.txt"));
 	
-    for (int i = 1; i <= 1; i++) {
+    for (int i = 1; i <= 2000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
@@ -431,6 +491,7 @@ public class LogReader {
               w.println(ar);
               w.println("Origin: " + qu.split("\t")[3]);
               w.println("Cache size is: " + myCache.cacheSize());
+              w.println("Size of myBgpSubQueries is: " + myBgpSubQueries.size());
               w.println("Results size is: " + myCache.resultsSize());
               w.println("Query " + (queryNumber - 1) + " results with cache: " + cacheResultAmount);
               w.println("Number of cache hits: " + myCache.getCacheHits());
