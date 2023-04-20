@@ -393,12 +393,11 @@ public class LogReader {
   public void readLog(File file) throws IOException {
 	InputStream is = new FileInputStream(file);
 	final Scanner sc = new Scanner(is);
-	System.out.println(myBgpSubQueries.size());
 	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 														 + "_Results.txt"));
 	
-    for (int i = 1; i <= 1; i++) {
+    for (int i = 1; i <= 50000; i++) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
