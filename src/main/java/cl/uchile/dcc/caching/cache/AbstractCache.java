@@ -377,11 +377,9 @@ public abstract class AbstractCache implements Cache {
 		e.printStackTrace();
 	  }
 	  BasicPattern bp = new BasicPattern();
-	  boolean flag = false;
 	  while (true) {
 		try {
-		  if (!flag) bp.add(t);
-		  else flag = false;
+		  bp.add(t);
 		  t = (Triple) oi.readObject();
 		} catch (ClassNotFoundException | IOException e) {
 		  OpBGP bb = new OpBGP(bp);
@@ -398,11 +396,15 @@ public abstract class AbstractCache implements Cache {
 		  QueryExecution qExec = QueryExecutionFactory.create(qq, model);
 		  ResultSet qResults = qExec.execSelect();
 		  cache(qBgps.get(0), qResults);
-		  flag = true;
 		  bp = new BasicPattern();
 		  try {
 			oi.readChar();
-		  } catch (IOException ee) { ee.printStackTrace(); break; }
+			t = (Triple) oi.readObject();
+		  } catch (IOException ee) { 
+			ee.printStackTrace(); break; 
+		  } catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		  }
 		}
 	  }
 	  w.flush();
