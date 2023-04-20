@@ -336,12 +336,6 @@ public abstract class AbstractCache implements Cache {
 	public void dumpCache(String s) {
 	  File output = new File(s);
 	  ObjectOutputStream o = null;
-	  PrintWriter w = null;
-	  try {
-		w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/TriplesAndResults.tsv"));
-	  } catch (IOException e1) {
-		e1.printStackTrace();
-	  }
 	  try {
 		o = new ObjectOutputStream(new FileOutputStream(output));
 		Iterator<OpBGP> it = getKeys().iterator();
@@ -352,12 +346,7 @@ public abstract class AbstractCache implements Cache {
 			o.writeObject(itt.next());
 		  }
 		  o.writeChar('\n');
-		  int size = this.queryToSolution.get(b).getTable().size();
-		  w.println(b.toString());
-		  w.println(size);
 		}
-		w.flush();
-		w.close();
 		o.flush();
 		o.close();
 	  } catch (IOException e) {
@@ -368,6 +357,12 @@ public abstract class AbstractCache implements Cache {
 	public void loadCache(String s, Model model) {
 	  File input = new File(s);
 	  ObjectInputStream oi = null;
+	  PrintWriter w = null;
+	  try {
+	    w = new PrintWriter(new FileWriter(new File("/home/gchandia/Thesis/LoadBgps.tsv")));
+	} catch (IOException e1) {
+		e1.printStackTrace();
+	}
 	  try {
 		oi = new ObjectInputStream(new FileInputStream(input));
 	  } catch (IOException e) {
@@ -388,6 +383,7 @@ public abstract class AbstractCache implements Cache {
 		  t = (Triple) oi.readObject();
 		} catch (ClassNotFoundException | IOException e) {
 		  OpBGP bb = new OpBGP(bp);
+		  w.println(bb.toString());
 		  Query qq = new Query();
 		  ElementGroup elg;
 		  qq = QueryFactory.make();
@@ -406,6 +402,8 @@ public abstract class AbstractCache implements Cache {
 		  } catch (IOException ee) { ee.printStackTrace(); break; }
 		}
 	  }
+	  w.flush();
+	  w.close();
 	}
 	
 	protected abstract void removeFromCache();
