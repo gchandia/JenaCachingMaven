@@ -23,6 +23,7 @@ public class Controller {
 	LogReader r = new LogReader(myCache, myBgpSubQueries);
 	//Better to comment this line if not going to load anything
 	//r.loadCache(cacheFile);
+	r.loadSubQueries("/home/gchandia/Thesis/myBgpSubQueries.tsv");
 	r.setQueryNumber(queryNumber);
 	try {
 	  r.readLog(new File(input));
@@ -31,15 +32,15 @@ public class Controller {
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
-	r.writeSubQueries(bgpsFile);
+	//r.writeSubQueries(bgpsFile);
   }
   
   public static void main(String[] args) {
 	Controller c = new Controller();
-	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1, "", "/home/gchandia/Thesis/myBgpSubQueries.tsv");
-	myCache.dumpCache("/home/gchandia/Thesis/Cache.tsv");
-	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001, "/home/gchandia/Thesis/Cache.tsv");
-	//myCache.dumpCache("/home/gchandia/Thesis/Cache2.tsv");
+	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1, "", "/home/gchandia/Thesis/myBgpSubQueries.tsv");
+	//myCache.dumpCache("/home/gchandia/Thesis/Cache.tsv");
+	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001, "/home/gchandia/Thesis/Cache.tsv", "");
+	myCache.dumpCache("/home/gchandia/Thesis/Cache2.tsv");
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_3.tsv", 100001);
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv", 150001);
   }
