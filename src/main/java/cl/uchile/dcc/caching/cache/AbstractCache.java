@@ -360,9 +360,9 @@ public abstract class AbstractCache implements Cache {
 	  PrintWriter w = null;
 	  try {
 	    w = new PrintWriter(new FileWriter(new File("/home/gchandia/Thesis/LoadBgps.tsv")));
-	} catch (IOException e1) {
+	  } catch (IOException e1) {
 		e1.printStackTrace();
-	}
+	  }
 	  try {
 		oi = new ObjectInputStream(new FileInputStream(input));
 	  } catch (IOException e) {
@@ -390,7 +390,9 @@ public abstract class AbstractCache implements Cache {
 		  qq.setQuerySelectType();
 		  qq.setQueryResultStar(true);
 		  elg = new ElementGroup();
-		  elg.addTriplePattern(bb.getPattern().get(0));
+		  for (Triple tt : bb.getPattern()) {
+			elg.addTriplePattern(tt);
+		  }
 		  qq.setQueryPattern(elg);
 		  w.println(qq);
 		  ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(qq));
