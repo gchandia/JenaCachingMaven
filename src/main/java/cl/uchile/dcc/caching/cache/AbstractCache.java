@@ -3,11 +3,9 @@ package cl.uchile.dcc.caching.cache;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -357,12 +355,6 @@ public abstract class AbstractCache implements Cache {
 	public void loadCache(String s, Model model) {
 	  File input = new File(s);
 	  ObjectInputStream oi = null;
-	  PrintWriter w = null;
-	  try {
-	    w = new PrintWriter(new FileWriter(new File("/home/gchandia/Thesis/LoadBgps.tsv")));
-	  } catch (IOException e1) {
-		e1.printStackTrace();
-	  }
 	  try {
 		oi = new ObjectInputStream(new FileInputStream(input));
 	  } catch (IOException e) {
@@ -383,7 +375,6 @@ public abstract class AbstractCache implements Cache {
 		  t = (Triple) oi.readObject();
 		} catch (ClassNotFoundException | IOException e) {
 		  OpBGP bb = new OpBGP(bp);
-		  w.println(bb.toString());
 		  Query qq = new Query();
 		  ElementGroup elg;
 		  qq = QueryFactory.make();
@@ -394,18 +385,9 @@ public abstract class AbstractCache implements Cache {
 			elg.addTriplePattern(tt);
 		  }
 		  qq.setQueryPattern(elg);
-		  w.println(qq);
 		  ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(qq));
 		  QueryExecution qExec = QueryExecutionFactory.create(qq, model);
-		  QueryExecution qExecTwo = QueryExecutionFactory.create(qq, model);
 		  ResultSet qResults = qExec.execSelect();
-		  ResultSet qResultTwo = qExecTwo.execSelect();
-		  int rr = 0;
-		  while (qResultTwo.hasNext()) {
-			rr++;
-			qResultTwo.next();
-		  }
-		  w.println(rr);
 		  cache(qBgps.get(0), qResults);
 		  bp = new BasicPattern();
 		  try {
@@ -418,8 +400,6 @@ public abstract class AbstractCache implements Cache {
 		  }
 		}
 	  }
-	  w.flush();
-	  w.close();
 	}
 	
 	protected abstract void removeFromCache();
