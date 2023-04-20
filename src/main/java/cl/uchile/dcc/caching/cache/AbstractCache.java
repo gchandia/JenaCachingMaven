@@ -392,9 +392,18 @@ public abstract class AbstractCache implements Cache {
 		  elg = new ElementGroup();
 		  elg.addTriplePattern(bb.getPattern().get(0));
 		  qq.setQueryPattern(elg);
+		  w.println(qq);
 		  ArrayList<OpBGP> qBgps = ExtractBgps.getBgps(Algebra.compile(qq));
 		  QueryExecution qExec = QueryExecutionFactory.create(qq, model);
+		  QueryExecution qExecTwo = QueryExecutionFactory.create(qq, model);
 		  ResultSet qResults = qExec.execSelect();
+		  ResultSet qResultTwo = qExecTwo.execSelect();
+		  int rr = 0;
+		  while (qResultTwo.hasNext()) {
+			rr++;
+			qResultTwo.next();
+		  }
+		  w.println(rr);
 		  cache(qBgps.get(0), qResults);
 		  bp = new BasicPattern();
 		  try {
