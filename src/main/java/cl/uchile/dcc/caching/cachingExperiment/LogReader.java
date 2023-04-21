@@ -121,12 +121,13 @@ public class LogReader {
 		  oi.readChar();
 		  t = (Triple) oi.readObject();
 		} catch (IOException ee) { 
-		  ee.printStackTrace(); break; 
+		  break; 
 		} catch (ClassNotFoundException e1) {
 		  e1.printStackTrace();
 		}
 	  }
 	}
+	System.out.println("Loaded subqueries!");
   }
   
   public void setQueryNumber(int queryNumber) {

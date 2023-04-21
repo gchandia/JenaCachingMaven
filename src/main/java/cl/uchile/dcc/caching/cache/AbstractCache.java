@@ -395,12 +395,13 @@ public abstract class AbstractCache implements Cache {
 			oi.readChar();
 			t = (Triple) oi.readObject();
 		  } catch (IOException ee) { 
-			ee.printStackTrace(); break; 
+			break; 
 		  } catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		  }
 		}
 	  }
+	  System.out.println("Loaded cache!");
 	}
 	
 	protected abstract void removeFromCache();

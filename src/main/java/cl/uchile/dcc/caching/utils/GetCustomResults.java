@@ -26,11 +26,10 @@ public class GetCustomResults {
       String line = tsv.readLine();
       while (line != null) {
     	String[] subs = line.split(" ");
-    	if (subs[0].equals("Query")) {
-    	  numberOfInfo++;
+    	if (subs[0].equals("Info")) numberOfInfo++;
+    	if (subs[0].equals("Time") && subs[1].equals("after") && subs[2].equals("reading") && subs[3].equals("all")) {
     	  sb1.append(subs[5] + ",");
     	}
-    	System.out.println(line);
     	line = tsv.readLine();
       }
       
