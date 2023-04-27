@@ -219,7 +219,7 @@ public class NumberOfRepeatedBgps {
 	}
 	
 	checkedBgpSubQueries.add(bgp);
-	if (myBgpSubQueries.size() < 10000) {
+	if (myBgpSubQueries.size() < 100000) {
 	  myBgpSubQueries.add(bgp);
 	} else {
 	  myBgpSubQueries.remove(0);
