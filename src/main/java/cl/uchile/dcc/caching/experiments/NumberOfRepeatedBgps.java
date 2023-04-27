@@ -255,7 +255,7 @@ public class NumberOfRepeatedBgps {
 	InputStream is = new FileInputStream(new File("/home/gchandia/wikidata_logs/FilteredLogs.tsv"));
 	final Scanner sc = new Scanner(is);
 	
-	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/Buffer10K.txt"));
+	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/Buffer100K.txt"));
 	
 	final NumberOfRepeatedBgps rb = new NumberOfRepeatedBgps();
 	
