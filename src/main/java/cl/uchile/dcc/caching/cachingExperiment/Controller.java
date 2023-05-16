@@ -8,6 +8,7 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
+import cl.uchile.dcc.caching.cache.LRUCache;
 
 public class Controller {
   private static Cache myCache;
@@ -15,15 +16,17 @@ public class Controller {
   private static ArrayList<OpBGP> myBgpSubQueries;
   
   public Controller() {
-	myCache = new CustomCacheV5(1000, 10000000, 900, 10);
+	myCache = new LRUCache(100, 1000000);
+	//myCache = new CustomCacheV5(100, 10000000, 90, 10);
+	//myCache = new CustomCacheV5(1000, 10000000, 900, 10);
 	myBgpSubQueries = new ArrayList<OpBGP>();
   }
   
   public void sendRequest(String input, int queryNumber, String cacheFile, String bgpsFile) {
 	LogReader r = new LogReader(myCache, myBgpSubQueries);
 	//Better to comment this line if not going to load anything
-	r.loadCache(cacheFile);
-	r.loadSubQueries("/home/gchandia/Thesis/myBgpSubQueries3.tsv");
+	//r.loadCache(cacheFile);
+	//r.loadSubQueries("/home/gchandia/Thesis/myBgpSubQueries3.tsv");
 	r.setQueryNumber(queryNumber);
 	try {
 	  r.readLog(new File(input));
@@ -32,11 +35,12 @@ public class Controller {
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
-	r.writeSubQueries(bgpsFile);
+	//r.writeSubQueries(bgpsFile);
   }
   
   public static void main(String[] args) {
 	Controller c = new Controller();
+	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1, "", "/home/gchandia/myBgpSubQueries.tsv");
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_1.tsv", 1, "", "/home/gchandia/Thesis/myBgpSubQueries.tsv");
 	//myCache.dumpCache("/home/gchandia/Thesis/Cache.tsv");
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_2.tsv", 50001, 
@@ -45,8 +49,8 @@ public class Controller {
 	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_3.tsv", 100001,
 	//			  "/home/gchandia/Thesis/Cache2.tsv", "/home/gchandia/Thesis/myBgpSubQueries3.tsv");
 	//myCache.dumpCache("/home/gchandia/Thesis/Cache3.tsv");
-	c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv", 150001,
-				  "/home/gchandia/Thesis/Cache3.tsv", "/home/gchandia/Thesis/myBgpSubQueries4.tsv");
-	myCache.dumpCache("/home/gchandia/Thesis/Cache4.tsv");
+	//c.sendRequest("/home/gchandia/wikidata_logs/FilteredLogs_4.tsv", 150001,
+	//			  "/home/gchandia/Thesis/Cache3.tsv", "/home/gchandia/Thesis/myBgpSubQueries4.tsv");
+	//myCache.dumpCache("/home/gchandia/Thesis/Cache4.tsv");
   }
 }
