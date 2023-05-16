@@ -10,6 +10,7 @@ import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
 import cl.uchile.dcc.caching.cache.LFUCache;
 import cl.uchile.dcc.caching.cache.LRUCache;
+import cl.uchile.dcc.caching.cache.RRCache;
 
 public class Controller {
   private static Cache myCache;
@@ -17,7 +18,7 @@ public class Controller {
   private static ArrayList<OpBGP> myBgpSubQueries;
   
   public Controller() {
-	myCache = new LFUCache(100, 1000000);
+	myCache = new RRCache(100, 1000000);
 	//myCache = new CustomCacheV5(100, 10000000, 90, 10);
 	//myCache = new CustomCacheV5(1000, 10000000, 900, 10);
 	myBgpSubQueries = new ArrayList<OpBGP>();
