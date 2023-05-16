@@ -397,10 +397,10 @@ public class LogReader {
 	final Scanner sc = new Scanner(is);
 	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
-														 + "_LRU_Results.txt"));
+														 + "_LFU_Results.txt"));
 	final PrintWriter ww = new PrintWriter(new FileWriter("/home/gchandia/Thesis/"
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length())
-														 + "_LRU_Errors.txt"));
+														 + "_LFU_Errors.txt"));
 	
     for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {

@@ -8,6 +8,7 @@ import org.apache.jena.sparql.algebra.op.OpBGP;
 
 import cl.uchile.dcc.caching.cache.Cache;
 import cl.uchile.dcc.caching.cache.CustomCacheV5;
+import cl.uchile.dcc.caching.cache.LFUCache;
 import cl.uchile.dcc.caching.cache.LRUCache;
 
 public class Controller {
@@ -16,7 +17,7 @@ public class Controller {
   private static ArrayList<OpBGP> myBgpSubQueries;
   
   public Controller() {
-	myCache = new LRUCache(100, 1000000);
+	myCache = new LFUCache(100, 1000000);
 	//myCache = new CustomCacheV5(100, 10000000, 90, 10);
 	//myCache = new CustomCacheV5(1000, 10000000, 900, 10);
 	myBgpSubQueries = new ArrayList<OpBGP>();
