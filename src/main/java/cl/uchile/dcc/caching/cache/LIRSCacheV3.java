@@ -221,10 +221,10 @@ public class LIRSCacheV3 extends AbstractCache {
 	   
 	QueryExecution qExecC = QueryExecutionFactory.create(queryC, model);
 	ResultSet qRC = qExecC.execSelect();
-	   
+	
 	QueryExecution qExecD = QueryExecutionFactory.create(queryD, model);
 	ResultSet qRD = qExecD.execSelect();
-	    
+	
 	QueryExecution qExecE = QueryExecutionFactory.create(queryE, model);
 	ResultSet qRE = qExecE.execSelect();
 	
