@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
@@ -54,15 +55,16 @@ import cl.uchile.dcc.qcan.main.SingleQuery;
 public class LogReader {
   private static Cache myCache;
   private static ArrayList<OpBGP> checkedBgpSubQueries;
-  private static ArrayList<OpBGP> myBgpSubQueries;
+  private static HashSet<OpBGP> myBgpSubQueries;
   private static ArrayList<OpBGP> cachedBgpSubQueries;
   private int queryNumber;
   private String qu = "";
   private static String myModel = "/home/gchandia/WikiDB";
   private static Dataset ds = TDBFactory.createDataset(myModel);
   private static Model model;
+  private static int cacheRequests = 0;
   
-  public LogReader(Cache myMyCache, ArrayList<OpBGP> myMyBgpSubQueries) {
+  public LogReader(Cache myMyCache, HashSet<OpBGP> myMyBgpSubQueries) {
 	myCache = myMyCache;
 	checkedBgpSubQueries = new ArrayList<OpBGP>();
 	myBgpSubQueries = myMyBgpSubQueries;
@@ -138,7 +140,7 @@ public class LogReader {
 	return myCache;
   }
   
-  public ArrayList<OpBGP> getMyBgpSubQueries() {
+  public HashSet<OpBGP> getMyBgpSubQueries() {
 	return myBgpSubQueries;
   }
   
@@ -329,9 +331,10 @@ public class LogReader {
   }
   
   static void cleanBgpSubQueries() {
-	ArrayList<OpBGP> cleanMyBgpSubQueries = new ArrayList<OpBGP>();
-	for (int i = 0; i < myBgpSubQueries.size(); i++) {
-	  OpBGP b = myBgpSubQueries.get(i);
+	HashSet<OpBGP> cleanMyBgpSubQueries = new HashSet<OpBGP>();
+	Iterator<OpBGP> it = myBgpSubQueries.iterator();
+	while (it.hasNext()) {
+	  OpBGP b = it.next();
 	  if (b != null) {
 		cleanMyBgpSubQueries.add(b);
 	  }
@@ -362,7 +365,8 @@ public class LogReader {
     for (OpBGP b : myBgpSubQueries) {
       //System.out.println("b EQUALS " + b);
       if (b.equals(bgp)) {
-    	cacheBgpQuery(bgp);
+    	//cacheBgpQuery(bgp);
+    	cacheRequests++;
         checkedBgpSubQueries.add(bgp);
         cachedBgpSubQueries.add(bgp);
         myBgpSubQueries.remove(b);
@@ -375,7 +379,7 @@ public class LogReader {
     if (myBgpSubQueries.size() < 10000) {
       myBgpSubQueries.add(bgp);
     } else {
-      myBgpSubQueries.remove(0);
+      myBgpSubQueries.remove(myBgpSubQueries.iterator().next());
       myBgpSubQueries.add(bgp);
     }
   }
@@ -395,12 +399,16 @@ public class LogReader {
   public void readLog(File file) throws IOException {
 	InputStream is = new FileInputStream(file);
 	final Scanner sc = new Scanner(is);
+	/*
 	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
-														 + "_LIRS_Results.txt"));
+														 + "_LIRS_Results.txt"));*/
+	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/10KBufferHashSet.txt"));
+	/*
 	final PrintWriter ww = new PrintWriter(new FileWriter("/home/gchandia/Thesis/"
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length())
 														 + "_LIRS_Errors.txt"));
+														 */
 	
     for (int i = 1; i <= 10000; i++) {
       final Runnable stuffToDo = new Thread() {
@@ -449,7 +457,7 @@ public class LogReader {
             cbl = "Time after canonicalising bgpList: " + (cblTime - startLine);
             //System.out.println("Number of subqueries is: " + bgpsq.size());
             checkBgps(bgpsq);
-            
+            /*
             Op inputOp = Algebra.compile(q);
             Transform cacheTransform = new CacheTransformCopy(myCache, startLine, numberOfTPs);
             Op cachedOp = Transformer.transform(cacheTransform, inputOp);
@@ -500,21 +508,25 @@ public class LogReader {
               w.println("Results size is: " + myCache.resultsSize());
               w.println("Query " + (queryNumber - 1) + " results with cache: " + cacheResultAmount);
               w.println("Number of cache hits: " + myCache.getCacheHits());
+              w.println("Number of cache requests: " + cacheRequests);
               w.println("Number of retrievals: " + myCache.getRetrievalHits());
               //w.println(myCache.getLinkedMap());
               /*w.println("Info for query number " + (queryNumber - 1));
               w.println("Origin: " + qu.split("\t")[3]);
-              w.println(ar);*/
+              w.println(ar);
               w.println();
               w.flush();
-            }
+            }*/
           } catch (InterruptedException | HashCollisionException | UnsupportedEncodingException e) {
-        	ww.println("Info for query number " + (queryNumber - 1));
-        	e.printStackTrace(ww);
-            ww.println();
+        	//ww.println("Info for query number " + (queryNumber - 1));
+        	//e.printStackTrace(ww);
+            //ww.println();
           }
       }
     };
+    
+    w.println("Number of cache requests: " + cacheRequests);
+    w.flush();
     
     final ExecutorService executor = Executors.newSingleThreadExecutor();
     @SuppressWarnings("rawtypes")
@@ -525,15 +537,15 @@ public class LogReader {
       future.get(15, TimeUnit.SECONDS);
     } catch (InterruptedException ie) {}
       catch (ExecutionException ee) {
-      ww.println("Info for query number " + (queryNumber - 1)); 
-      ee.printStackTrace(ww);
-      ee.printStackTrace(ww);
-      ww.println();
+      //ww.println("Info for query number " + (queryNumber - 1)); 
+      //ee.printStackTrace(ww);
+      //ee.printStackTrace(ww);
+      //ww.println();
     }
       catch (TimeoutException te) {}
     }
 	w.close();
-	ww.close();
+	//ww.close();
 	sc.close();
 	model.commit();
   }

@@ -2,27 +2,23 @@ package cl.uchile.dcc.caching.cachingExperiment;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.apache.jena.sparql.algebra.op.OpBGP;
 
 import cl.uchile.dcc.caching.cache.Cache;
-import cl.uchile.dcc.caching.cache.CustomCacheV5;
-import cl.uchile.dcc.caching.cache.LFUCache;
 import cl.uchile.dcc.caching.cache.LIRSCacheV3;
-import cl.uchile.dcc.caching.cache.LRUCache;
-import cl.uchile.dcc.caching.cache.RRCache;
 
 public class Controller {
   private static Cache myCache;
   //Keeps last bgps that have been checked
-  private static ArrayList<OpBGP> myBgpSubQueries;
+  private static HashSet<OpBGP> myBgpSubQueries;
   
   public Controller() {
 	myCache = new LIRSCacheV3(100, 1000000, 90, 10);
 	//myCache = new CustomCacheV5(100, 10000000, 90, 10);
 	//myCache = new CustomCacheV5(1000, 10000000, 900, 10);
-	myBgpSubQueries = new ArrayList<OpBGP>();
+	myBgpSubQueries = new HashSet<OpBGP>();
   }
   
   public void sendRequest(String input, int queryNumber, String cacheFile, String bgpsFile) {
