@@ -403,7 +403,7 @@ public class LogReader {
 	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/" 
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length()) 
 														 + "_LIRS_Results.txt"));*/
-	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/10KBufferHashSet.txt"));
+	final PrintWriter w = new PrintWriter(new FileWriter("/home/gchandia/Thesis/100KBufferHashSet.txt"));
 	/*
 	final PrintWriter ww = new PrintWriter(new FileWriter("/home/gchandia/Thesis/"
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length())
