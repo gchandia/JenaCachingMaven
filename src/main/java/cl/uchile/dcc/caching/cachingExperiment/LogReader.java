@@ -376,7 +376,7 @@ public class LogReader {
     
     checkedBgpSubQueries.add(bgp);
     //Change bgp buffer size
-    if (myBgpSubQueries.size() < 10000) {
+    if (myBgpSubQueries.size() < 100000) {
       myBgpSubQueries.add(bgp);
     } else {
       myBgpSubQueries.remove(myBgpSubQueries.iterator().next());
@@ -526,9 +526,6 @@ public class LogReader {
       }
     };
     
-    w.println("Number of cache requests: " + cacheRequests);
-    w.flush();
-    
     final ExecutorService executor = Executors.newSingleThreadExecutor();
     @SuppressWarnings("rawtypes")
     final Future future = executor.submit(stuffToDo);
@@ -545,6 +542,8 @@ public class LogReader {
     }
       catch (TimeoutException te) {}
     }
+    w.println("Number of cache requests: " + cacheRequests);
+    w.flush();
 	w.close();
 	//ww.close();
 	sc.close();
