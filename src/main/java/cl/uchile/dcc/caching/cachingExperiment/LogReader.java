@@ -331,15 +331,7 @@ public class LogReader {
   }
   
   static void cleanBgpSubQueries() {
-	HashSet<OpBGP> cleanMyBgpSubQueries = new HashSet<OpBGP>();
-	Iterator<OpBGP> it = myBgpSubQueries.iterator();
-	while (it.hasNext()) {
-	  OpBGP b = it.next();
-	  if (b != null) {
-		cleanMyBgpSubQueries.add(b);
-	  }
-	}
-	myBgpSubQueries = cleanMyBgpSubQueries;
+	myBgpSubQueries.remove(null);
   }
   
   private static boolean checkForBgpSubQuery(OpBGP bgp) {
@@ -362,16 +354,12 @@ public class LogReader {
       if (b.equals(bgp)) return;
     }
     
-    for (OpBGP b : myBgpSubQueries) {
-      //System.out.println("b EQUALS " + b);
-      if (b.equals(bgp)) {
-    	//cacheBgpQuery(bgp);
-    	cacheRequests++;
-        checkedBgpSubQueries.add(bgp);
-        cachedBgpSubQueries.add(bgp);
-        myBgpSubQueries.remove(b);
-        return;
-      }
+    if (myBgpSubQueries.contains(bgp)) {
+      cacheRequests++;
+      checkedBgpSubQueries.add(bgp);
+      cachedBgpSubQueries.add(bgp);
+      myBgpSubQueries.remove(bgp);
+      return;
     }
     
     checkedBgpSubQueries.add(bgp);
@@ -409,8 +397,7 @@ public class LogReader {
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length())
 														 + "_LIRS_Errors.txt"));
 														 */
-	int i = 0;
-    //for (int i = 1; i <= 10000; i++) {
+	//for (int i = 1; i <= 10000; i++) {
     while(sc.hasNextLine()) {
       final Runnable stuffToDo = new Thread() {
         @Override
