@@ -409,8 +409,9 @@ public class LogReader {
 														 + file.getName().substring(file.getName().indexOf("F"), file.getName().length())
 														 + "_LIRS_Errors.txt"));
 														 */
-	
-    for (int i = 1; i <= 10000; i++) {
+	int i = 0;
+    //for (int i = 1; i <= 10000; i++) {
+    while(sc.hasNextLine()) {
       final Runnable stuffToDo = new Thread() {
         @Override
         public void run() {
